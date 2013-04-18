@@ -1,0 +1,12 @@
+# Add application configuration variables here, as shown below.
+#
+# PUSHER_APP_ID: "2954"
+# PUSHER_KEY: 7381a978f7dd7f9a1117
+# PUSHER_SECRET: abdc3b896a0ffb85d373
+# STRIPE_API_KEY: EdAvEPVEC3LuaTg5Q3z6WbDVqZlcBQ8Z
+# STRIPE_PUBLIC_KEY: pk_BRgD57O8fHja9HxduJUszhef6jCyS
+SPLITWISE_API_KEY: your_key_here
+SPLITWISE_API_SECRET: your_secret_here
+SPLITWISE_AUTHORIZE_URL: "https://secure.splitwise.com/authorize"
+SPLITWISE_REQUEST_TOKEN_URL: "https://secure.splitwise.com/api/v3.0/get_request_token"
+SPLITWISE_ACCESS_TOKEN_URL: "https://secure.splitwise.com/api/v3.0/get_access_token"
