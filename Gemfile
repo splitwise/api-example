@@ -8,6 +8,9 @@ gem 'rails', '3.2.11'
 gem 'sqlite3'
 
 
+gem "figaro"  # for local configuration settings that shouldn't be shared on GitHub
+
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
