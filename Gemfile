@@ -10,6 +10,10 @@ gem "figaro"  # for local configuration settings that shouldn't be shared on Git
 gem "thin"    # use thin as a webserver
 gem "oauth-plugin", "~> 0.4.0"
 
+group :development do
+  gem "better_errors"
+  gem "binding_of_caller"
+end
 
 # Gems used only for assets and not required
 # in production environments by default.
