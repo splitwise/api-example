@@ -1,4 +1,8 @@
 ApiExample::Application.routes.draw do
+  match "oauth/login", :as => :login
+  match "oauth/callback"
+  root :to => 'oauth#index'
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
