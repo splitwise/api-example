@@ -1,0 +1,17 @@
+<%= form_for(@octopus) do |f| %>
+  <% if @octopus.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@octopus.errors.count, "error") %> prohibited this octopus from being saved:</h2>
+
+      <ul>
+      <% @octopus.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
