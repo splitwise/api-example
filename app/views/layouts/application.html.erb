@@ -1,14 +1,34 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>ApiExample</title>
-  <%= stylesheet_link_tag    "application", :media => "all" %>
-  <%= javascript_include_tag "application" %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
+    <head>
+        <title>ApiExample</title>
+        <link rel='shortcut icon' href='http://localhost:3000/favicon.ico'/>
+        <%= stylesheet_link_tag    "application", :media => "all" %>
+        <%= javascript_include_tag "application" %>
+        <%= csrf_meta_tags %>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    </head>
+    <body>
 
-<%= yield %>
+        <ul id='top-menu'>
+            <li class='top-menu-item balance'>
+                <a href='balance_over_time'>Balance</a>
+            </li>
+            <li class='top-menu-item expenses'>
+                <a href='expenses_over_time'>Expenses</a>
+            </li>
+            <li class='top-menu-item more'>
+                <a href='#'>More</a>
+            </li>
+            <li class='top-menu-item menu'>
+                <a href='#'>Menu</a>
+            </li>
+            <li class='top-menu-item items'>
+                <a href='#'>Items</a>
+            </li>
+        </ul>
 
-</body>
+        <%= yield %>
+
+    </body>
 </html>

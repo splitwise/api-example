@@ -1,3 +1,211 @@
 // Place all the styles related to the oauth controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+$side-menu-width: 12em;
+$side-menu-margin-right: 1em;
+$chart-historical-balance-width: 40em;
+
+
+body {
+    font-family: "Lato", "Lucida Grande", "Verdana", "Helvetica";
+}
+
+#main-container {
+    margin: 0 auto;
+    width: intrinsic;
+    width: -moz-fit-content;
+
+    #side-menu-container {
+        float: left;
+        width: $side-menu-width;
+    }
+
+    #content-container {
+        margin-left: $side-menu-width + $side-menu-margin-right;
+    }
+
+}
+
+#top-menu {
+    font-size: 1em;
+    border-bottom: 1px solid #ddd;
+    list-style: none;
+    white-space: nowrap;
+
+    .top-menu-item {
+        display: inline-block;
+        margin-left: 0.2em;
+        margin-bottom: -1px;
+        border-top-left-radius: 0.4em;
+        border-top-right-radius: 0.4em;
+        a {
+            padding: 1em 1em;
+            color: #0088CC;
+            text-decoration: none;
+            display: block;
+        }
+    }
+
+    .top-menu-item:not(.active) {
+        &:hover {
+            background: #EEEEEE;
+            a {
+                color: #005580;
+            }
+        }    
+    }
+
+    .top-menu-item.active {
+        border-color: #ddd;
+        border-style: solid;
+        border-width: 1px;
+        border-bottom-color: rgba(255, 255, 255, 1);
+        a {
+            color: #333333;
+            cursor: default;
+        }
+    }
+
+}
+
+#side-menu {
+    list-style: none;
+    border-radius: 0.4em;
+    border: 1px solid #ddd;
+    margin: 0;
+    padding: 0;
+
+    .side-menu-item {
+        background-color: transparent;
+        border-bottom: 1px solid #ddd;
+
+        &:first-child {
+            border-top-right-radius: 0.4em;
+            border-top-left-radius: 0.4em;
+        }
+
+        &:last-child {
+            border-bottom-right-radius: 0.4em;
+            border-bottom-left-radius: 0.4em;
+            border-bottom: none;
+        }
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.0625);
+
+            a {
+                color: #005580;
+            }
+        }
+
+        &.active {
+            background-color: rgba(0, 136, 204, 1);
+
+            a {
+                color: #FFF;
+            }
+
+        }
+
+        a {
+            display: inline-block;
+            width: $side-menu-width - 1em;
+            padding: 0.5em 0 0.5em 1em;
+
+            background-color: transparent;
+            color: #0088CC;
+            text-decoration: none;
+
+        }
+
+    }
+
+}
+
+.well {
+    background-color: #F5F5F5;
+    box-shadow: inset 0 0 10px #CCC;
+}
+
+/* These styles pertain to the main chart: */
+#chart-historical-balance-container,
+#expenses-chart-container,
+#expenses-by-category-chart-container {
+    border-top-right-radius: 0.4em;
+    border-top-left-radius: 0.4em;
+    padding: 0.4em;   
+    border: 1px solid #ccc; 
+}
+
+#chart-historical-balance,
+#expenses-chart,
+#expenses-by-category-chart {
+    width: $chart-historical-balance-width - 0.8em;
+    height: 30em;
+}
+
+
+/* These style pertain to the scroll chart: */
+#scroll-chart-container {
+    border-bottom-right-radius: 0.4em;
+    border-bottom-left-radius: 0.4em;
+    padding: 1.5em 1.5em 1.5em 1.5em;
+}
+
+#scroll-chart {
+    width: $chart-historical-balance-width - 3em;
+    height: 4em;
+    -moz-user-select: none; 
+    -khtml-user-select: none; 
+    -webkit-user-select: none; 
+    -o-user-select: none;
+}
+
+/* These styles pertain to the film: */
+div#film-backdrop {
+    position: absolute;
+}
+
+div#film {
+    background: rgba(0, 0, 0, 0.15);
+    position: absolute;
+    height: 100%;
+    left: 0;
+    width: 100%;
+    border-radius: 0.4em;
+
+    .film-handle.left {
+        float: left;
+    }
+    
+    .film-handle.right {
+        float: right;
+    }
+   
+    .film-handle {
+        width: 0.4em;
+        height: 100%;
+        background: #666;
+        border-radius: 0.4em;
+
+        &:hover {
+            cursor: ew-resize;
+        }
+        
+        .film-label-container {
+            position: absolute;
+            top: 100%;
+
+            .film-label {
+                position: relative;
+                left: -50%;
+                visibility: hidden;
+                font-size: 12px;
+            }
+
+        }
+
+    }
+
+}

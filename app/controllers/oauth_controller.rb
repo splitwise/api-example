@@ -1,11 +1,4 @@
 class OauthController < ApplicationController
-  def index
-    if session[:access_token] 
-      render :text =>session[:access_token].get("https://secure.splitwise.com/api/v3.0/get_current_user").body
-    else
-      redirect_to login_path
-    end
-  end
 
   def login
     @consumer = OAuth::Consumer.new(ENV["SPLITWISE_API_KEY"], ENV["SPLITWISE_API_SECRET"], {
@@ -24,12 +17,56 @@ class OauthController < ApplicationController
 
   def callback
     if session[:request_token]
-      puts "oauth_verifier:"
-      p params[:oauth_verifier]
       session[:access_token] = session[:request_token].get_access_token(:oauth_verifier => params[:oauth_verifier])
-      redirect_to root_path
+      redirect_to action: 'balance_over_time'
     else
       render :text => "Looks like something went wrong - sorry!"
+    end
+  end
+
+  def balance_over_time
+    unless session[:access_token]
+      redirect_to login_path
+    end
+  end
+
+  def expenses_over_time
+    unless session[:access_token]
+      redirect_to login_path
+    end
+  end
+
+  def expenses_by_category
+    unless session[:access_token]
+      redirect_to login_path
+    end
+  end
+
+  def get_balance_over_time
+    if session[:access_token]
+      if params[:format] == 'google-charts'
+        render text: JSON.unparse(Oauth.get_balance_over_time_google_charts_format(session[:access_token]))
+      else
+        render text: JSON.unparse(Oauth.get_balance_over_time(session[:access_token]))
+      end
+    else
+      redirect_to login_path
+    end
+  end
+
+  def get_expenses_over_time
+    if session[:access_token]
+      render text: JSON.unparse(Oauth.get_expenses_over_time(session[:access_token]))
+    else
+      redirect_to login_path
+    end
+  end
+
+  def get_expenses_by_category
+    if session[:access_token]
+      render text: JSON.unparse(Oauth.get_expenses_by_category(session[:access_token]))
+    else
+      redirect_to login_path
     end
   end
 end

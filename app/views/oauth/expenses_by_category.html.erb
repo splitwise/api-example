@@ -1,0 +1,32 @@
+<%= javascript_include_tag "oauth_expenses_by_category" %>
+<div id='main-container-outer'>
+    <div id='main-container'>
+        <div id='side-menu-container'>
+            <ul id='side-menu' class='well'>
+                <li class='side-menu-item total'>
+                    <a href='expenses_over_time'>Total</a>
+                </li>
+                <li class='side-menu-item by-category active'>
+                    <a href='expenses_by_category'>By Category</a>
+                </li>
+                <li class='side-menu-item'>
+                    <a href='#'>Many</a>
+                </li>
+                <li class='side-menu-item'>
+                    <a href='#'>Exciting</a>
+                </li>
+                <li class='side-menu-item'>
+                    <a href='#'>Options</a>
+                </li>
+            </ul>
+        </div>
+        <div id='content-container'>
+            <div id='expenses-by-category-chart-container'>
+                <div id='expenses-by-category-chart'></div>
+            </div>
+            <div id='scroll-chart-container' class='well'>
+                <div id='scroll-chart'></div>
+            </div>
+        </div>
+    </div>
+</div>
