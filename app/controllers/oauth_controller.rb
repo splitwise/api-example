@@ -1,7 +1,7 @@
 class OauthController < ApplicationController
   def index
     if session[:access_token] 
-      render :text =>session[:access_token].get("https://secure.splitwise.com/api/v3.0/get_current_user").to_yaml
+      render :text =>session[:access_token].get("https://secure.splitwise.com/api/v3.0/get_current_user").body
     else
       redirect_to login_path
     end
@@ -24,6 +24,8 @@ class OauthController < ApplicationController
 
   def callback
     if session[:request_token]
+      puts "oauth_verifier:"
+      p params[:oauth_verifier]
       session[:access_token] = session[:request_token].get_access_token(:oauth_verifier => params[:oauth_verifier])
       redirect_to root_path
     else
