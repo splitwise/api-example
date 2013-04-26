@@ -145,7 +145,7 @@ layerFilm = () ->
 google.setOnLoadCallback(drawCharts)
 google.load('visualization', '1', {packages: ['corechart']})
 
-$.ajax({url: '/oauth/get_balance_over_time?format=google-charts'}).done((d) ->
+$.ajax({url: '/user/get_balance_over_time?format=google-charts'}).done((d) ->
 
     rows = JSON.parse(d).map(([dateStr, balance]) -> 
         date = new Date(dateStr)

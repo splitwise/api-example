@@ -145,7 +145,7 @@ layerFilm = () ->
 google.setOnLoadCallback(drawCharts)
 google.load('visualization', '1', {packages: ['corechart']})
 
-$.ajax({url: '/oauth/get_expenses_over_time'}).done((d) ->
+$.ajax({url: '/user/get_expenses_over_time'}).done((d) ->
 
     rows = JSON.parse(d).map((e) -> 
         date = new Date(e.date)

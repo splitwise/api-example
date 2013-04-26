@@ -1,16 +1,17 @@
 ApiExample::Application.routes.draw do
-  get "oauth/expenses_by_category"
-  get "oauth/get_expenses_by_category"
+  get "user/expenses_by_category"
+  get "user/get_expenses_by_category"
 
-  get "oauth/expenses_over_time"
-  get "oauth/get_expenses_over_time"
+  get "user/expenses_over_time"
+  get "user/get_expenses_over_time"
 
-  get "oauth/balance_over_time"
-  get "oauth/get_balance_over_time"
+  get "user/balance_over_time"
+  get "user/get_balance_over_time"
 
-  match "oauth/login", :as => :login
-  match "oauth/callback"
-  root :to => 'oauth#index'
+  match "user/login", :as => :login
+  match "user/callback"
+  match "user/logout"
+  root :to => 'user#welcome'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

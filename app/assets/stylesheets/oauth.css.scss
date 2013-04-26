@@ -4,7 +4,9 @@
 
 $side-menu-width: 12em;
 $side-menu-margin-right: 1em;
-$chart-historical-balance-width: 40em;
+$main-chart-width: 40em;
+
+$standard-border-radius: 0.4em;
 
 
 body {
@@ -37,8 +39,8 @@ body {
         display: inline-block;
         margin-left: 0.2em;
         margin-bottom: -1px;
-        border-top-left-radius: 0.4em;
-        border-top-right-radius: 0.4em;
+        border-top-left-radius: $standard-border-radius;
+        border-top-right-radius: $standard-border-radius;
         a {
             padding: 1em 1em;
             color: #0088CC;
@@ -67,11 +69,16 @@ body {
         }
     }
 
+    .top-menu-item.logout {
+        margin-right: 2em;
+        float: right;
+    }
+
 }
 
 #side-menu {
     list-style: none;
-    border-radius: 0.4em;
+    border-radius: $standard-border-radius;
     border: 1px solid #ddd;
     margin: 0;
     padding: 0;
@@ -81,13 +88,13 @@ body {
         border-bottom: 1px solid #ddd;
 
         &:first-child {
-            border-top-right-radius: 0.4em;
-            border-top-left-radius: 0.4em;
+            border-top-right-radius: $standard-border-radius;
+            border-top-left-radius: $standard-border-radius;
         }
 
         &:last-child {
-            border-bottom-right-radius: 0.4em;
-            border-bottom-left-radius: 0.4em;
+            border-bottom-right-radius: $standard-border-radius;
+            border-bottom-left-radius: $standard-border-radius;
             border-bottom: none;
         }
 
@@ -129,32 +136,28 @@ body {
 }
 
 /* These styles pertain to the main chart: */
-#chart-historical-balance-container,
-#expenses-chart-container,
-#expenses-by-category-chart-container {
-    border-top-right-radius: 0.4em;
-    border-top-left-radius: 0.4em;
+#main-chart-container {
+    border-top-right-radius: $standard-border-radius;
+    border-top-left-radius: $standard-border-radius;
     padding: 0.4em;   
     border: 1px solid #ccc; 
 }
 
-#chart-historical-balance,
-#expenses-chart,
-#expenses-by-category-chart {
-    width: $chart-historical-balance-width - 0.8em;
+#main-chart {
+    width: $main-chart-width - 0.8em;
     height: 30em;
 }
 
 
 /* These style pertain to the scroll chart: */
 #scroll-chart-container {
-    border-bottom-right-radius: 0.4em;
-    border-bottom-left-radius: 0.4em;
+    border-bottom-right-radius: $standard-border-radius;
+    border-bottom-left-radius: $standard-border-radius;
     padding: 1.5em 1.5em 1.5em 1.5em;
 }
 
 #scroll-chart {
-    width: $chart-historical-balance-width - 3em;
+    width: $main-chart-width - 3em;
     height: 4em;
     -moz-user-select: none; 
     -khtml-user-select: none; 
@@ -173,7 +176,7 @@ div#film {
     height: 100%;
     left: 0;
     width: 100%;
-    border-radius: 0.4em;
+    border-radius: $standard-border-radius;
 
     .film-handle.left {
         float: left;
@@ -187,7 +190,7 @@ div#film {
         width: 0.4em;
         height: 100%;
         background: #666;
-        border-radius: 0.4em;
+        border-radius: $standard-border-radius;
 
         &:hover {
             cursor: ew-resize;
