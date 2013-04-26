@@ -1,0 +1,15 @@
+<%= 
+
+    menu_items = [['Total', '/user/balance_over_time'], 
+                  ['More', '#'],
+                  ['Options', '#']].map do |name, link|
+        result = {name: name, link: link}
+        if balance_side_menu.to_s == name
+            result[:active] = true
+        end
+        result
+    end
+
+    render partial: 'user/side_menu', object: menu_items
+
+%>

@@ -1,0 +1,7 @@
+<ul id='side-menu' class='well'>
+    <% side_menu.each do |menu_item| %>
+    <li class='side-menu-item <%= 'active' if menu_item[:active] %>'>
+        <a href='<%= menu_item[:link] %>'><%= menu_item[:name] %></a>
+    </li>
+    <% end %>
+</ul>
