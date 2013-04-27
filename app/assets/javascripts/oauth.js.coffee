@@ -122,6 +122,8 @@ this.createScrolledChart = (variable) ->
 
     filmHandleLeftDraggable = false
     filmHandleRightDraggable = false
+    filmDraggable = false
+    filmPressedAt = false
 
     elem =
         filmBackdrop: $("<div id='film-backdrop'></div>"),
@@ -136,20 +138,32 @@ this.createScrolledChart = (variable) ->
     elem.filmBackdrop.append(elem.film.append(elem.filmHandleLeft.append(elem.filmLabelContainerLeft.append(elem.filmLabelLeft)))
                                       .append(elem.filmHandleRight.append(elem.filmLabelContainerRight.append(elem.filmLabelRight))))
 
-    elem.filmHandleLeft.mousedown(() ->
+    elem.filmHandleLeft.mousedown((event) ->
+        event.preventDefault()
         filmHandleLeftDraggable = true
         elem.filmLabelLeft.css('visibility', 'visible')
+        false
     )
 
-    elem.filmHandleRight.mousedown(() ->
+    elem.filmHandleRight.mousedown((event) ->
+        event.preventDefault()
         filmHandleRightDraggable = true
         elem.filmLabelRight.css('visibility', 'visible')
+        false
+    )
+
+    elem.film.mousedown((event) ->
+        event.preventDefault()
+        filmDraggable = true
+        filmPressedAt = event.pageX - $(this).offset().left
     )
 
     $(document).mouseup(() ->
-        if filmHandleLeftDraggable or filmHandleRightDraggable
+        if filmHandleLeftDraggable or filmHandleRightDraggable or filmDraggable
             filmHandleLeftDraggable = false
             filmHandleRightDraggable = false
+            filmDraggable = false
+            console.debug(filmDraggable)
             elem.filmLabelLeft.css('visibility', 'hidden')
             elem.filmLabelRight.css('visibility', 'hidden')
             redrawMainChart(dateOnScroll(elem.film.position().left),
@@ -159,6 +173,7 @@ this.createScrolledChart = (variable) ->
     onMouseMove = (event) ->
         minHandleDistance = 10
         newX = event.pageX - elem.film.offsetParent().offset().left
+        console.debug(filmDraggable)
         if filmHandleLeftDraggable and newX < -minHandleDistance + elem.film.position().left + elem.film.outerWidth() - elem.filmHandleLeft.width() - elem.filmHandleRight.width()
             newX = Math.max(newX, 0)
             elem.film.css('width', elem.film.outerWidth() - newX + parseInt(elem.film.css('left')), 10)
@@ -168,6 +183,11 @@ this.createScrolledChart = (variable) ->
             newX = Math.min(newX, elem.film.offsetParent().width())
             elem.film.css('width', newX - elem.film.position().left)
             elem.filmLabelRight.html(scrollLabelDate(dateOnScroll(newX)))
+        else if filmDraggable
+            newX = newX - filmPressedAt
+            newX = Math.min(Math.max(newX, 0), 
+                            elem.film.offsetParent().width() - elem.film.width())
+            elem.film.css('left', newX)
 
     $(document).mousemove(onMouseMove)
 

@@ -181,9 +181,10 @@ div#film {
     background: rgba(0, 0, 0, 0.15);
     position: absolute;
     height: 100%;
-    left: 0;
-    width: 100%;
+    left: 80%;
+    width: 20%;
     border-radius: $standard-border-radius;
+    cursor: ew-resize;
 
     .film-handle.left {
         float: left;
@@ -198,10 +199,7 @@ div#film {
         height: 100%;
         background: #666;
         border-radius: $standard-border-radius;
-
-        &:hover {
-            cursor: ew-resize;
-        }
+        cursor: col-resize;
         
         .film-label-container {
             position: absolute;
