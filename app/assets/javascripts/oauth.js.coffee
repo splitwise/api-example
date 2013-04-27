@@ -6,18 +6,40 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
-createCheckin = (n, callback) -> () ->
-    n -= 1
-    callback() if n is 0
+this.activateMatchbox = () ->
+    $('.side-menu-item.matching').append($("<div id='matchbox-container'>
+                                                <div id='matchbox-nub'></div>
+                                                <div id='matchbox'>
+                                                    <input type='text' placeholder='Use regular expressions!'>
+                                                    <button class='submit'>Search</button>
+                                                </div>
+                                            </div>"))
+    $('.side-menu-item.matching').click(() ->
+        $('.side-menu-item.matching #matchbox-container').css('visibility', 'visible')
+        false
+    )
+    $(document).click(() ->
+        $('.side-menu-item.matching #matchbox-container').css('visibility', 'hidden')
+    )
+    $('#matchbox button.submit').click(() ->
+        console.debug($('#matchbox input'))
+        console.debug($('#matchbox input')[0])
+        console.debug($('#matchbox input').val())
+        window.location.href = "/user/expenses_matching?query=#{$('#matchbox input').val()}"
+    )
 
+### Example arguments:
+chartType = 'AreaChart'
 
-prettyTime = (t) -> "#{t.toLocaleTimeString()} #{t.getDate()}/#{t.getMonth()+1}"
+url = '/user/get_balance_over_time?format=google-charts'
 
-scrollLabelDate = (t) -> t.toLocaleDateString()
-
-###
 cols = [{id: 'date', type: 'date'}, {id: 'balance', type: 'number'}]
-rows = undefined
+
+processRow = ([dateStr, balance]) -> 
+    date = new Date(dateStr)
+    {c: [{v: date, f: prettyTime(date)}, {v: Number(balance)}]}
+
+
 optionsMainChart = 
     colors: ['#0088CC']
     legend: 
@@ -40,13 +62,19 @@ optionsScrollChart =
         textPosition: 'none'
     vAxis:
         textPosition: 'none'
-
-processRow = ([dateStr, balance]) -> 
-    date = new Date(dateStr)
-    {c: [{v: date, f: prettyTime(date)}, {v: Number(balance)}]}
 ###
 
-createScrolledChart = (varChartType, varUrl, varCols, varProcessRow, varOptionsMainChart, varOptionsScrollChart) ->
+
+this.createScrolledChart = (variable) ->
+
+    createCheckin = (n, callback) -> () ->
+        n -= 1
+        callback() if n is 0
+
+    prettyTime = (t) -> "#{t.toLocaleTimeString()} #{t.getMonth()+1}/#{t.getDate()}"
+
+    scrollLabelDate = (t) -> t.toLocaleDateString()
+
     dates = {}
     spawnDates = () ->
         dates.all = rows.map((r) -> r.c[0].v)
@@ -57,23 +85,23 @@ createScrolledChart = (varChartType, varUrl, varCols, varProcessRow, varOptionsM
         return new Date(dates.first + dates.span * (x / elem.film.offsetParent().width()))
 
     initScrollChart = () ->
-        chart = new google.visualization[varChartType]($('#scroll-chart')[0])
-        dataTable = new google.visualization.DataTable({cols: varCols, rows: rows})
+        chart = new google.visualization[variable.chartType]($('#scroll-chart')[0])
+        dataTable = new google.visualization.DataTable({cols: variable.cols, rows: rows})
         google.visualization.events.addListener(chart, 'ready', layerFilm)
-        chart.draw(dataTable, varOptionsScrollChart)
+        chart.draw(dataTable, variable.optionsScrollChart)
         return chart
 
     initMainChart = () ->
-        chart = new google.visualization[varChartType]($('#main-chart')[0])
-        dataTable = new google.visualization.DataTable({cols: varCols, rows: rows})
-        chart.draw(dataTable, varOptionsMainChart)
+        chart = new google.visualization[variable.chartType]($('#main-chart')[0])
+        dataTable = new google.visualization.DataTable({cols: variable.cols, rows: rows})
+        chart.draw(dataTable, variable.optionsMainChart)
         return chart
 
     redrawMainChart = (startDate, finishDate) ->
         start = Math.max(0, indexOfDateAfter(startDate) - 1)
         finish = indexOfDateAfter(finishDate) + 1
-        dataTable = new google.visualization.DataTable({cols: varCols, rows: rows.slice(start, finish)})
-        elem.mainChart.draw(dataTable, optionsMainChart)
+        dataTable = new google.visualization.DataTable({cols: variable.cols, rows: rows.slice(start, finish)})
+        elem.mainChart.draw(dataTable, variable.optionsMainChart)
 
     indexOfDateAfter = (date) ->
             for d, i in dates.all                       #optimize this by using a binary search
@@ -157,9 +185,9 @@ createScrolledChart = (varChartType, varUrl, varCols, varProcessRow, varOptionsM
     google.load('visualization', '1', {packages: ['corechart']})
 
     rows = undefined
-    $.ajax({url: varUrl}).done((d) ->
+    $.ajax({url: variable.url}).done((d) ->
 
-        rows = JSON.parse(d).map(processRow)
+        rows = variable.processData(JSON.parse(d))
         drawCharts()
 
     )

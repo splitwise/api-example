@@ -1,15 +1,10 @@
 class UserController < ApplicationController
   before_filter :check_for_credentials, except: [:login, :callback, :welcome]
-  before_filter :activate_top_menu, except: [:login, :callback, :welcome]
-
+  
   def check_for_credentials
     unless session[:access_token]
       redirect_to login_path
     end
-  end
-
-  def activate_top_menu
-    @top_menu = true
   end
 
   def after_callback
@@ -58,37 +53,44 @@ class UserController < ApplicationController
   def balance_over_time
   end
 
+  def balances_over_time_with_friends
+  end
+
   def expenses_over_time
   end
 
   def expenses_by_category
   end
 
+  def expenses_matching
+    @data = User.new(session[:access_token]).get_expenses_matching(params[:query])
+  end
+
   def get_balance_over_time
-    if session[:access_token]
-      if params[:format] == 'google-charts'
-        render text: JSON.unparse(User.new(session[:access_token]).get_balance_over_time_google_charts_format)
-      else
-        render text: JSON.unparse(User.new(session[:access_token]).get_balance_over_time)
-      end
+    if params[:format] == 'google-charts'
+      render text: JSON.unparse(User.new(session[:access_token]).get_balance_over_time_google_charts_format)
     else
-      redirect_to login_path
+      render text: JSON.unparse(User.new(session[:access_token]).get_balance_over_time)
     end
+  end
+
+  def get_balances_over_time_with_friends
+    render text: JSON.unparse(User.new(session[:access_token]).get_balances_over_time_with_friends)
   end
 
   def get_expenses_over_time
-    if session[:access_token]
-      render text: JSON.unparse(User.new(session[:access_token]).get_expenses_over_time)
-    else
-      redirect_to login_path
-    end
+    render text: JSON.unparse(User.new(session[:access_token]).get_expenses_over_time)
+  end
+
+  def get_expenses_over_time_cumulative
+    render text: JSON.unparse(User.new(session[:access_token]).get_expenses_over_time_cumulative)
   end
 
   def get_expenses_by_category
-    if session[:access_token]
-      render text: JSON.unparse(User.new(session[:access_token]).get_expenses_by_category)
-    else
-      redirect_to login_path
-    end
+    render text: JSON.unparse(User.new(session[:access_token]).get_expenses_by_category)
+  end
+
+  def get_expenses_matching 
+    render text: JSON.unparse(User.new(session[:access_token]).get_expenses_matching(params[:query]))
   end
 end

@@ -2,6 +2,53 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
+
+prettyTime = (t) -> "#{t.toLocaleTimeString()} #{t.getMonth()+1}/#{t.getDate()}"
+
+
+options = 
+    chartType: 'AreaChart'
+
+    cols: [{id: 'date', type: 'date'}, {id: 'balance', type: 'number'}]
+
+    url: '/user/get_expenses_over_time_cumulative'
+
+    processData: (d) -> d.map((e) -> 
+            date = new Date(e.date)
+            {c: [{v: date, f: prettyTime(date)}, {v: Number(e.expense)}]}
+        )
+
+    optionsMainChart:
+        colors: ['#0088CC']
+        legend: 
+            position: 'none'
+        hAxis:
+            textStyle: 
+                fontName: 'Lucida Grande'
+        vAxis:
+            textStyle:
+                fontName: 'Lucida Grande'
+
+    optionsScrollChart:
+        colors: ['#0088CC']
+        backgroundColor: '#F5F5F5'
+        chartArea:
+            width: '100%'
+            height: '100%'
+        legend: 
+            position: 'none'
+        hAxis:
+            textPosition: 'none'
+        vAxis:
+            textPosition: 'none'
+
+$(activateMatchbox)
+createScrolledChart(options)
+
+
+
+
+###
 createCheckin = (n, callback) -> () ->
     n -= 1
     callback() if n is 0
@@ -159,3 +206,4 @@ $(document).ready(() ->
     $('.active a').click(() -> false)
     drawCharts()
 )
+###

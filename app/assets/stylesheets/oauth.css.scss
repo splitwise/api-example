@@ -137,17 +137,24 @@ body {
 
 /* These styles pertain to the main chart: */
 #main-chart-container {
-    border-top-right-radius: $standard-border-radius;
-    border-top-left-radius: $standard-border-radius;
     padding: 0.4em;   
     border: 1px solid #ccc; 
+}
+
+#main-chart-container:first-child {
+    border-top-right-radius: $standard-border-radius;
+    border-top-left-radius: $standard-border-radius;
+}
+
+#main-chart-container:last-child {
+    border-bottom-right-radius: $standard-border-radius;
+    border-bottom-left-radius: $standard-border-radius;
 }
 
 #main-chart {
     width: $main-chart-width - 0.8em;
     height: 30em;
 }
-
 
 /* These style pertain to the scroll chart: */
 #scroll-chart-container {
@@ -203,7 +210,8 @@ div#film {
             .film-label {
                 position: relative;
                 left: -50%;
-                visibility: hidden;
+                -webkit-visibility: hidden;
+                -moz-visibility: hidden;
                 font-size: 12px;
             }
 
@@ -211,4 +219,46 @@ div#film {
 
     }
 
+}
+
+.side-menu-item.matching {
+    position: relative;    
+}
+
+#matchbox-container {
+    background-color: #FFF;
+    border-radius: $standard-border-radius/2;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    visibility: hidden;
+    z-index: 2;
+    -webkit-transform: translate3d(0px, 0px, 0px);
+    box-shadow: 0.2em 0.2em 0.5em 0 #666;
+    
+    #matchbox-nub {
+        background-color: #FFF;
+        /*box-shadow: 0 0 0.2em;*/
+        position: absolute;
+        -webkit-transform: matrix(1, -1, 1, 1, 0, 8) translate3d(0px, 0px, 0px);
+        -moz-transform: matrix(0.5, -0.5, 0.5, 0.5, 0, 0);
+        -ms-transform: matrix(0.5, -0.5, 0.5, 0.5, 0, 0);
+        z-index: -1;
+        width: 1em; 
+        height: 1em;
+    }
+
+    #matchbox {
+        margin: 0.4em;
+        z-index: 2;
+        -webkit-transform: translate3d(0px, 0px, 0px);
+        input {
+            font-family: "Lato", "Lucida Grande", "Verdana", "Helvetica";
+            border-radius: $standard-border-radius/2;
+            border-width: 1px;
+            height: 1.5em;
+            width: 12em;    
+            padding: 0 0.5em;
+        }
+    }
 }

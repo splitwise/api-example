@@ -1,10 +1,9 @@
+<%= render partial: 'user/top_menu', object: :expenses %>
 <%= javascript_include_tag "oauth_expenses" %>
 <div id='main-container-outer'>
     <div id='main-container'>
         <div id='side-menu-container'>
-            <ul id='side-menu' class='well'>
-                <%= render partial: 'user/expenses_side_menu', object: :Total %>
-            </ul>
+            <%= render partial: 'user/expenses_side_menu', object: :total %>
         </div>
         <div id='content-container'>
             <div id='main-chart-container'>

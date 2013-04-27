@@ -1,12 +1,13 @@
 <%= 
 
-    menu_items = [['Total', '/user/expenses_over_time'],
-                  ['By Category', '/user/expenses_by_category'], 
-                  ['Many', '#'], 
-                  ['Exciting', '#'],
-                  ['Options', '#']].map do |name, link|
-        result = {name: name, link: link}
-        if expenses_side_menu.to_s == name
+    menu_items = [['total', 'Total', '/user/expenses_over_time'],
+                  ['by-category', 'By Category', '/user/expenses_by_category'], 
+                  ['matching', 'Search an expense', '#'],
+                  ['many', 'Many', '#'], 
+                  ['exciting', 'Exciting', '#'],
+                  ['options', 'Options', '#']].map do |id, name, link|
+        result = {id: id, name: name, link: link}
+        if expenses_side_menu.to_s == id
             result[:active] = true
         end
         result

@@ -2,6 +2,84 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
+
+prettyTime = (t) -> "#{t.toLocaleTimeString()} #{t.getMonth()+1}/#{t.getDate()}"
+
+createCheckin = (n, callback) -> () ->
+    n -= 1
+    callback() if n is 0
+
+cols = [{id: 'Category', type: 'string'}, {id: 'Spending', type: 'number'}]
+rows = undefined
+options = {}
+
+drawChart = createCheckin(2, () ->
+    chart = new google.visualization.PieChart($('#main-chart')[0])
+    dataTable = new google.visualization.DataTable({cols: cols, rows: rows})
+    chart.draw(dataTable, options)
+)
+
+google.setOnLoadCallback(drawChart)
+google.load('visualization', '1', {packages: ['corechart']})
+
+
+$.ajax({url: '/user/get_expenses_by_category'}).done((jsonData) ->
+    categories = JSON.parse(jsonData)
+
+    rows = ({c: [{v: category}, {v: spending}]} for category, spending of categories)
+
+    console.debug(rows)
+    console.debug(categories)
+
+    drawChart()
+)
+
+$(activateMatchbox)
+
+###
+options = 
+    chartType: 'ColumnChart'
+
+    cols: [{id: 'date', type: 'date'}]
+
+    url: '/user/get_expenses_by_category'
+
+    processData: (data) -> 
+        for category in data.categories
+            options.cols.push({id: category, label: category, type: 'number'})
+
+        data.rows.map((r) -> 
+            date = new Date(r.date)
+            return {c: [{v: date, f: prettyTime(date)}].concat(r.expenses.map((e) ->
+                {v: Number(e)}
+            ))}
+        )
+
+    optionsMainChart:
+        hAxis:
+            textStyle: 
+                fontName: 'Lucida Grande'
+        vAxis:
+            textStyle:
+                fontName: 'Lucida Grande'
+
+    optionsScrollChart:
+        backgroundColor: '#F5F5F5'
+        chartArea:
+            width: '100%'
+            height: '100%'
+        legend: 
+            position: 'none'
+        hAxis:
+            textPosition: 'none'
+        vAxis:
+            textPosition: 'none'
+
+createScrolledChart(options)
+###
+
+
+###
 createCheckin = (n, callback) -> () ->
     n -= 1
     callback() if n is 0
@@ -173,3 +251,4 @@ $(document).ready(() ->
     drawCharts()
 
 )
+###

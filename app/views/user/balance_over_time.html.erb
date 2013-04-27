@@ -1,8 +1,9 @@
+<%= render partial: 'user/top_menu', object: :balance %>
 <%= javascript_include_tag "oauth_balance" %>
 <div id='main-container-outer'>
     <div id='main-container'>
         <div id='side-menu-container'>
-            <%= render partial: 'user/balance_side_menu', object: :Total %>
+            <%= render partial: 'user/balance_side_menu', object: :total %>
         </div>
         <div id='content-container'>
             <div id='main-chart-container'>
