@@ -15,7 +15,7 @@ options =
 
     processData: (d) -> d.map((e) -> 
             date = new Date(e.date)
-            {c: [{v: date, f: prettyTime(date)}, {v: Number(e.expense)}]}
+            {c: [{v: date, f: prettyTime(date)}, {v: Number(e.expense), f:"$"+Number(e.expense).toFixed(2)}]}
         )
 
     optionsMainChart:

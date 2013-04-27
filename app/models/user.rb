@@ -16,7 +16,7 @@ class User
 
     ['get_current_user', 'get_expenses'].each do |method|
         define_method method.to_sym do
-            JSON.parse(@access_token.get(API_URL+method).body)
+            JSON.parse(@access_token.get(API_URL+method+"?limit=250&visible=true").body)
         end
     end
 
@@ -32,18 +32,19 @@ class User
         id = get_current_user_id 
         expenses = get_expenses['expenses']
         expenses.sortBy! do |expense|
-            expense['updated_at']
+            expense['date']
         end
         expenses.collect! do |expense|
             users = expense['users'].select do |share| 
-                next share['user']['id'] == id 
+                next (share['user'] and share['user']['id'] == id)
             end
             if users.length == 1
                 share = users[0]
+                block.call(expense, share)
             else
-                throw "Found not one but #{users.length} users!"
+                # TODO: handle expenses not involving the current user
+                # throw "Found not one but #{users.length} users!"
             end
-            block.call(expense, share)
         end
     end
 
@@ -51,8 +52,8 @@ class User
         balance = 0
         result = []
         each_expense_and_share do |expense, share|
-            balance += share['net_balance'].to_i
-            result.push({'date' => expense['updated_at'], 'balance' => balance.to_s})
+            balance += share['net_balance'].to_f
+            result.push({'date' => expense['date'], 'balance' => balance.to_s})
         end
         result
     end
@@ -63,10 +64,10 @@ class User
         friend_id_to_name = {}
         balances = {}
         each_expense do |expense|
-            if balances[expense['updated_at']]
-                throw "I find a date in balances already set!" 
+            if balances[expense['date']]
+                #throw "I find a date in balances already set!" 
             end
-            balances[expense['updated_at']] = []
+            balances[expense['date']] = []
             expense['repayments'].each do |repayment|
                 if repayment['from'] == id
                     index = friend_ids.index(repayment['to']) 
@@ -76,8 +77,8 @@ class User
                             user['user_id'] == friend_ids[index]
                         end.first['user']
                     end
-                    balances[expense['updated_at']][index] ||= 0
-                    balances[expense['updated_at']][index] -= repayment['amount'].to_f
+                    balances[expense['date']][index] ||= 0
+                    balances[expense['date']][index] -= repayment['amount'].to_f
                 elsif repayment['to'] == id
                     index = friend_ids.index(repayment['from'])
                     unless index
@@ -86,8 +87,8 @@ class User
                             user['user_id'] == friend_ids[index]
                         end.first['user']
                     end
-                    balances[expense['updated_at']][index] ||= 0
-                    balances[expense['updated_at']][index] += repayment['amount'].to_f
+                    balances[expense['date']][index] ||= 0
+                    balances[expense['date']][index] += repayment['amount'].to_f
                 end
             end
         end
@@ -133,7 +134,7 @@ class User
         expenses = []
         each_expense_and_share do |expense, share|
             expenses.push({
-                "date" => expense['updated_at'],
+                "date" => expense['date'],
                 "expense" => share['owed_share']   
             })
         end
@@ -157,7 +158,7 @@ class User
         rows = []
         each_expense_and_share do |expense, share|
             rows.push({
-                'date' => expense['updated_at'],
+                'date' => expense['date'],
                 expense['category']['name'] => share['owed_share']
             })
             categoryHash[expense['category']['name']] = true
@@ -194,7 +195,7 @@ class User
                     (expenses['description'] + ' ' + expenses['category']['name']).match(q)
                 }.length == processed_query.length
                 expenses.push({
-                    "date" => expense['updated_at'],
+                    "date" => expense['date'],
                     "expense" => share['owed_share']   
                 })
             end
@@ -254,7 +255,7 @@ end
         expenses = []
         each_expense_and_share do |expense, share|
             expenses.push({
-                "date" => expense['updated_at'],
+                "date" => expense['date'],
                 "net_balance" => share['net_balance']
             })
         end
