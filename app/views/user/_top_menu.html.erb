@@ -1,0 +1,16 @@
+<ul id='top-menu'>
+    <% [
+        ['balance', 'Balance', '/user/balance_over_time'],
+        ['expenses', 'Expenses', '/user/expenses_over_time'],
+        ['more', 'More', '#'],
+        ['menu', 'Menu', '#'],
+        ['options', 'Options', '#']
+       ].each do |id, name, link| %>
+    <li class='top-menu-item <%= id %> <%= 'active' if id == top_menu.to_s %>'>
+        <a href='<%= link %>'><%= name %></a>
+    </li>
+    <% end %>
+    <li class='top-menu-item logout'>
+        <a href='/user/logout'>Logout</a>
+    </li>
+</ul>

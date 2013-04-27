@@ -1,0 +1,19 @@
+<div id='data'></div>
+<%= render partial: 'user/top_menu', object: :expenses %>
+<%= javascript_include_tag "oauth_expenses" %>
+
+<div id='main-container-outer'>
+    <div id='main-container'>
+        <div id='side-menu-container'>
+            <%= render partial: 'user/expenses_side_menu', object: :total %>
+        </div>
+        <div id='content-container'>
+            <div id='main-chart-container'>
+                <div id='main-chart'></div>
+            </div>
+            <div id='scroll-chart-container' class='well'>
+                <div id='scroll-chart'></div>
+            </div>
+        </div>
+    </div>
+</div>
