@@ -22,7 +22,28 @@ drawChart = createCheckin(2, () ->
 google.setOnLoadCallback(drawChart)
 google.load('visualization', '1', {packages: ['corechart']})
 
+this.primeCharts = (categories) ->
+    rows = ({c: [{v: category}, {v: spending}]} for category, spending of categories)
 
+    console.debug(rows)
+    console.debug(categories)
+
+    drawChart()
+
+
+$(activateMatchbox)
+
+$(document).ready(() -> 
+
+    $('.active a').click(() -> 
+        event.preventDefault()
+    )
+
+)
+
+
+
+###
 $.ajax({url: '/user/get_expenses_by_category'}).done((jsonData) ->
     categories = JSON.parse(jsonData)
 
@@ -34,7 +55,10 @@ $.ajax({url: '/user/get_expenses_by_category'}).done((jsonData) ->
     drawChart()
 )
 
-$(activateMatchbox)
+$(document).ready(() ->
+    $(activateMatchbox)
+)
+###
 
 ###
 options = 

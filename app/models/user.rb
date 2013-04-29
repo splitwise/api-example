@@ -14,18 +14,44 @@ class User
         @access_token = access_token
     end
 
-    ['get_current_user', 'get_expenses'].each do |method|
+    ['get_current_user', 'get_friendships'].each do |method|
         define_method method.to_sym do
-            JSON.parse(@access_token.get(API_URL+method+"?limit=250&visible=true").body)
+            JSON.parse(@access_token.get(API_URL+method).body)
         end
     end
 
+    def get_expenses
+        JSON.parse(@access_token.get(API_URL+'get_expenses?limit=250&visible=true').body)
+    end
+
     def get_current_user_id
-        get_current_user['user']['id']
+        @id or (@id = get_current_user['user']['id'])
+    end
+
+    def get_friend_ids
+        id = get_current_user_id
+        friend_ids = []
+        each_friendship do |friendship|
+            candidates = friendship['users'].reject{|u| u['id'] == id}
+            throw "I find not 1 but #{candidates.length} other users in a friendship." unless candidates.length == 1
+            friend_ids.push(candidates[0]['id'])
+        end
     end
 
     def each_expense &block
-        expenses = get_expenses['expenses'].each &block
+        expenses = get_expenses['expenses']
+        expenses.sortBy! do |expense|
+            expense['date']
+        end
+        expenses.each &block
+    end
+
+    def each_expense_newest_to_oldest &block
+        expenses = get_expenses['expenses']
+        expenses.sort! do |a, b|
+            b['date'] <=> a['date']
+        end
+        expenses.each &block
     end
 
     def each_expense_and_share &block
@@ -48,16 +74,235 @@ class User
         end
     end
 
-    def get_balance_over_time
-        balance = 0
-        result = []
-        each_expense_and_share do |expense, share|
-            balance += share['net_balance'].to_f
-            result.push({'date' => expense['date'], 'balance' => balance.to_s})
+    def each_expense_and_share_newest_to_oldest &block
+        id = get_current_user_id 
+        expenses = get_expenses['expenses']
+        expenses.sort! do |a, b|
+            b['date'] <=> a['date']
         end
-        result
+        expenses.collect! do |expense|
+            users = expense['users'].select do |share| 
+                next (share['user'] and share['user']['id'] == id)
+            end
+            if users.length == 1
+                share = users[0]
+                block.call(expense, share)
+            else
+                # TODO: handle expenses not involving the current user
+                # throw "Found not one but #{users.length} users!"
+            end
+        end
     end
 
+    def each_friendship &block
+        get_friendships['friendships'].each &block
+    end
+
+    def each_friend &block
+        id = get_current_user_id
+        each_friendship do |friendship|
+            candidates = friendship['users'].reject{|u| u['id'] == id}
+            throw "I find not 1 but #{candidates.length} other users in a friendship." unless candidates.length == 1
+            block.call(candidates[0])
+        end    
+    end
+
+    def get_current_balance 
+        balance = 0
+        each_friendship do |friendship|
+            balance += friendship['balance'].to_f
+        end
+        balance
+    end
+
+    def get_balance_over_time
+        balance = get_current_balance
+        balances = []
+        each_expense_and_share_newest_to_oldest do |expense, share|
+            balances.push({'date' => expense['date'], 'balance' => balance.to_f})
+            balance -= share['net_balance'].to_f
+        end
+        return balances.reverse
+    end
+
+    def get_current_balances_with_friends
+        id = get_current_user_id
+        d = get_current_user_id
+        friends = {}
+        each_friendship do |friendship|
+            candidates = friendship['users'].reject{|u| u['id'] == id}
+            throw "I find not 1 but #{candidates.length} other users in a friendship." unless candidates.length == 1
+            friends[candidates[0]['id']] = friendship['balance'].to_f
+        end
+        friends
+    end
+
+    def get_balances_over_time_with_friends
+        id = get_current_user_id
+        current_balances = get_current_balances_with_friends
+        balance_records = []
+        each_expense_newest_to_oldest do |expense|
+            balance_records.push({
+                                    'date' => expense['date'],
+                                    'balances' => current_balances.values_at(*current_balances.keys.sort!)
+                                 })
+            expense['repayments'].each do |repayment|
+                if repayment['from'] == id
+                    current_balances[repayment['to']] += repayment['amount'].to_f
+                elsif repayment['to'] == id
+                    current_balances[repayment['from']] -= repayment['amount'].to_f
+                end
+            end
+        end
+        friends = []
+        each_friend do |friend|
+            friends.push(friend)
+        end
+        {
+            'friends' => friends,
+            'balances' => balance_records.reverse
+        }
+    end
+
+    def get_expenses_over_time 
+        expenses = []
+        each_expense_and_share do |expense, share|
+            unless expense['payment']
+                expenses.push({
+                    "date" => expense['date'],
+                    "expense" => share['owed_share'].to_f,
+                    "description" => expense['description']
+                })
+            end
+        end
+        expenses.sortBy! do |a|
+            a['date']
+        end
+        expenses
+    end
+
+    def get_expenses_over_time_cumulative
+        total = 0
+        expenses = get_expenses_over_time
+        expenses.each do |e|
+            e['total'] = total = e['expense'] + total
+        end
+        expenses
+    end
+
+    def get_expenses_by_category
+        categoryHash = {}
+        each_expense_and_share do |expense, share|
+            unless expense['payment']
+                categoryHash[expense['category']['name']] ||= 0
+                categoryHash[expense['category']['name']] += share['owed_share'].to_f
+            end
+        end
+        categoryHash
+    end
+
+    def get_expenses_by_category_over_time_cumulative
+        id = get_current_user_id
+        current_expenses = get_expenses_by_category
+        categories = current_expenses.keys.sortBy! do |category|
+            -current_expenses[category]
+        end
+        expenses_records = []
+        each_expense_and_share_newest_to_oldest do |expense, share|
+            expenses_records.push({
+                                    'date' => expense['date'],
+                                    'expenses' => current_expenses.values_at(*categories)
+                                 })
+            current_expenses[expense['category']['name']] -= share['owed_share'].to_f
+        end
+        {
+            'categories' => categories,
+            'expenses' => expenses_records.reverse
+        }
+    end
+
+    def get_expenses_matching query
+        expenses = []
+        processed_query = query.gsub(/[^a-zA-Z]/, ' ').split(/\ +/)
+        p query
+        p processed_query
+        each_expense_and_share do |expense, share|
+            unless expense['payment']
+                if processed_query.select { |q| 
+                        (expense['description'] + ' ' + expense['category']['name']).match(q)
+                    }.length > 0 or processed_query.length == 0
+                    expenses.push({
+                        "date" => expense['date'],
+                        "expense" => share['owed_share'].to_f,
+                        "description" => expense['description'] 
+                    })
+                end
+            end
+        end
+        expenses.sort! do |a, b|
+            a['date'] <=> b['date']
+        end
+        expenses
+    end
+
+    def get_expenses_matching_cumulative query
+        total = 0
+        expenses = get_expenses_matching query
+        expenses.each do |e|
+            e['total'] = total = e['expense'] + total
+        end
+        expenses
+    end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#No longer useful:
+=begin
+    def self.get_net_balances_over_time access_token
+        expenses = []
+        each_expense_and_share do |expense, share|
+            expenses.push({
+                "date" => expense['date'],
+                "net_balance" => share['net_balance']
+            })
+        end
+        expenses
+    end
+=end
+
+=begin
     def get_balances_with_friends
         id = get_current_user_id
         friend_ids = []
@@ -122,46 +367,20 @@ class User
             'balances' => balanceses
         }
     end
+=end
 
-    def get_balance_over_time_google_charts_format 
-        historical_balance = get_balance_over_time
-        historical_balance.collect do |balance|
-            [balance['date'], balance['balance']]
-        end
-    end
-
-    def get_expenses_over_time 
-        expenses = []
-        each_expense_and_share do |expense, share|
-            expenses.push({
-                "date" => expense['date'],
-                "expense" => share['owed_share']   
-            })
-        end
-        expenses.sort! do |a, b|
-            a['date'] <=> b['date']
-        end
-        expenses
-    end
-
-    def get_expenses_over_time_cumulative
-        total = 0
-        expenses = get_expenses_over_time
-        expenses.each do |e|
-            e['expense'] = total = e['expense'].to_f + total
-        end
-        expenses
-    end
-
-    def get_expenses_over_time_by_category #Exports in the form {categories: ["foo", "bar", "baz"], rows: [["10:11:12 Jan 6", 13, 84, 29], ...]}
+=begin
+    def get_expenses_by_category_over_time #Exports in the form {categories: ["foo", "bar", "baz"], rows: [["10:11:12 Jan 6", 13, 84, 29], ...]}
         categoryHash = {}
         rows = []
         each_expense_and_share do |expense, share|
-            rows.push({
-                'date' => expense['date'],
-                expense['category']['name'] => share['owed_share']
-            })
-            categoryHash[expense['category']['name']] = true
+            unless expense['payment']
+                rows.push({
+                    'date' => expense['date'],
+                    expense['category']['name'] => share['owed_share']
+                })
+                categoryHash[expense['category']['name']] = true
+            end
         end
         categories = categoryHash.keys
         rows.collect! do |row|
@@ -175,91 +394,4 @@ class User
             'rows' => rows
         }
     end
-
-    def get_expenses_by_category
-        categoryHash = {}
-        each_expense_and_share do |expense, share|
-            unless expense['payment']
-                categoryHash[expense['category']['name']] ||= 0
-                categoryHash[expense['category']['name']] += share['owed_share'].to_f
-            end
-        end
-        categoryHash
-    end
-
-    def get_expenses_matching query
-        expenses = []
-        processed_query = query.gsub(/[^a-zA-Z]/, ' ').split(/\ +/)
-        each_expense_and_share do |expense, share|
-            if processed_query.select { |q| 
-                    (expenses['description'] + ' ' + expenses['category']['name']).match(q)
-                }.length == processed_query.length
-                expenses.push({
-                    "date" => expense['date'],
-                    "expense" => share['owed_share']   
-                })
-            end
-        end
-        expenses.sort! do |a, b|
-            a['date'] <=> b['date']
-        end
-        expenses
-    end
-
-    def get_expenses_cumulative_matching query
-        total = 0
-        expenses = get_expenses_matching query
-        expenses.each do |e|
-            e['expense'] = total = e['expense'].to_f + total
-        end
-        expenses
-    end
-end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#No longer useful:
-=begin
-    def self.get_net_balances_over_time access_token
-        expenses = []
-        each_expense_and_share do |expense, share|
-            expenses.push({
-                "date" => expense['date'],
-                "net_balance" => share['net_balance']
-            })
-        end
-        expenses
-    end
 =end
-

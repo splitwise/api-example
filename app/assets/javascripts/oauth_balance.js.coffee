@@ -8,15 +8,6 @@ prettyTime = (t) -> "#{t.toLocaleTimeString()} #{t.getMonth()+1}/#{t.getDate()}"
 
 options = 
     chartType: 'AreaChart'
-
-    cols: [{id: 'date', type: 'date'}, {id: 'balance', type: 'number'}],
-    
-    url: '/user/get_balance_over_time?format=google-charts'
-    
-    processData: (d) -> d.map(([dateStr, balance]) -> 
-            date = new Date(dateStr)
-            {c: [{v: date, f: prettyTime(date)}, {v: Number(balance), f:"$"+Number(balance).toFixed(2)}]}
-        )
     
     optionsMainChart:
         colors: ['#0088CC']
@@ -25,7 +16,7 @@ options =
         hAxis:
             textStyle: 
                 fontName: 'Lucida Grande'
-        vAxis:
+        vAxis:  
             textStyle:
                 fontName: 'Lucida Grande'
     
@@ -42,7 +33,26 @@ options =
         vAxis:
             textPosition: 'none'
 
-createScrolledChart(options)
+
+cols = [{id: 'date', type: 'date'}, {id: 'balance', type: 'number'}]
+
+this.primeCharts = (data) ->
+    console.debug(data)
+    rows = data.map((b) -> 
+            date = new Date(b.date)
+            {c: [{v: date, f: prettyTime(date)}, {v: Number(b.balance), f:"$"+Number(b.balance).toFixed(2)}]}
+        ) 
+
+    createScrolledChart({cols: cols, rows: rows}, options)
+
+###
+    url: '/user/get_balance_over_time?format=google-charts'
+    
+    processData: (d) -> d.map(([dateStr, balance]) -> 
+            date = new Date(dateStr)
+            {c: [{v: date, f: prettyTime(date)}, {v: Number(balance), f:"$"+Number(balance).toFixed(2)}]}
+        )
+###
 
 
 

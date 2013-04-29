@@ -7,13 +7,6 @@
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
 this.activateMatchbox = () ->
-    $('.side-menu-item.matching').append($("<div id='matchbox-container'>
-                                                <div id='matchbox-nub'></div>
-                                                <div id='matchbox'>
-                                                    <input type='text' placeholder='Use regular expressions!'>
-                                                    <button class='submit'>Search</button>
-                                                </div>
-                                            </div>"))
     $('.side-menu-item.matching').click(() ->
         $('.side-menu-item.matching #matchbox-container').css('visibility', 'visible')
         false
@@ -21,10 +14,7 @@ this.activateMatchbox = () ->
     $(document).click(() ->
         $('.side-menu-item.matching #matchbox-container').css('visibility', 'hidden')
     )
-    $('#matchbox button.submit').click(() ->
-        console.debug($('#matchbox input'))
-        console.debug($('#matchbox input')[0])
-        console.debug($('#matchbox input').val())
+    $('#matchbox .submit').click(() ->
         window.location.href = "/user/expenses_matching?query=#{$('#matchbox input').val()}"
     )
 
@@ -65,7 +55,12 @@ optionsScrollChart =
 ###
 
 
-this.createScrolledChart = (variable) ->
+this.createScrolledChart = (data, variable) ->
+    console.debug("I create a scrolled chart.")
+    cols = data.cols
+    rows = data.rows
+    console.debug(cols)
+    console.debug(rows)
 
     createCheckin = (n, callback) -> () ->
         n -= 1
@@ -84,24 +79,27 @@ this.createScrolledChart = (variable) ->
     dateOnScroll = (x) -> 
         return new Date(dates.first + dates.span * (x / elem.film.offsetParent().width()))
 
-    initScrollChart = () ->
+    createScrollChart = () ->
         chart = new google.visualization[variable.chartType]($('#scroll-chart')[0])
-        dataTable = new google.visualization.DataTable({cols: variable.cols, rows: rows})
+        dataTable = new google.visualization.DataTable({cols: cols, rows: rows})
         google.visualization.events.addListener(chart, 'ready', layerFilm)
         chart.draw(dataTable, variable.optionsScrollChart)
         return chart
 
     initMainChart = () ->
         chart = new google.visualization[variable.chartType]($('#main-chart')[0])
-        dataTable = new google.visualization.DataTable({cols: variable.cols, rows: rows})
-        chart.draw(dataTable, variable.optionsMainChart)
         return chart
 
     redrawMainChart = (startDate, finishDate) ->
         start = Math.max(0, indexOfDateAfter(startDate) - 1)
         finish = indexOfDateAfter(finishDate) + 1
-        dataTable = new google.visualization.DataTable({cols: variable.cols, rows: rows.slice(start, finish)})
+        console.debug(rows.slice(start, finish))
+        dataTable = new google.visualization.DataTable({cols: cols, rows: rows.slice(start, finish)})
         elem.mainChart.draw(dataTable, variable.optionsMainChart)
+
+    redrawMainChartFromScrolled = () ->
+        redrawMainChart(dateOnScroll(elem.film.position().left),
+                dateOnScroll(elem.film.position().left + elem.film.width()))
 
     indexOfDateAfter = (date) ->
             for d, i in dates.all                       #optimize this by using a binary search
@@ -110,11 +108,12 @@ this.createScrolledChart = (variable) ->
             return dates.all.length - 1
 
 
-    drawCharts = createCheckin(3, () ->
+    drawCharts = createCheckin(2, () ->
 
         spawnDates()
-        elem.scrollChart = initScrollChart()
+        elem.scrollChart = createScrollChart()
         elem.mainChart = initMainChart()
+        redrawMainChartFromScrolled()
         
     )
 
@@ -163,17 +162,14 @@ this.createScrolledChart = (variable) ->
             filmHandleLeftDraggable = false
             filmHandleRightDraggable = false
             filmDraggable = false
-            console.debug(filmDraggable)
             elem.filmLabelLeft.css('visibility', 'hidden')
             elem.filmLabelRight.css('visibility', 'hidden')
-            redrawMainChart(dateOnScroll(elem.film.position().left),
-                            dateOnScroll(elem.film.position().left + elem.film.width()))
+            redrawMainChartFromScrolled()
     )
 
     onMouseMove = (event) ->
         minHandleDistance = 10
         newX = event.pageX - elem.film.offsetParent().offset().left
-        console.debug(filmDraggable)
         if filmHandleLeftDraggable and newX < -minHandleDistance + elem.film.position().left + elem.film.outerWidth() - elem.filmHandleLeft.width() - elem.filmHandleRight.width()
             newX = Math.max(newX, 0)
             elem.film.css('width', elem.film.outerWidth() - newX + parseInt(elem.film.css('left')), 10)
@@ -204,6 +200,7 @@ this.createScrolledChart = (variable) ->
     google.setOnLoadCallback(drawCharts)
     google.load('visualization', '1', {packages: ['corechart']})
 
+    ###
     rows = undefined
     $.ajax({url: variable.url}).done((d) ->
 
@@ -211,10 +208,13 @@ this.createScrolledChart = (variable) ->
         drawCharts()
 
     )
+    ###
 
     $(document).ready(() -> 
 
-        $('.active a').click(() -> false)
+        $('.active a').click(() -> 
+            event.preventDefault()
+        )
         drawCharts()
 
     )

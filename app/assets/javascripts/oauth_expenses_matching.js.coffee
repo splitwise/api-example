@@ -1,4 +1,6 @@
 
+
+### I don't use this; it would be identical to oauth_expenses.js.coffee
 urlParams = Hash[*window.location.href[window.location.href.indexOf('?') + 1..].split(/&|=/)]
 
 console.log(urlParams)
@@ -8,15 +10,6 @@ prettyTime = (t) -> "#{t.toLocaleTimeString()} #{t.getMonth()+1}/#{t.getDate()}"
 
 options = 
     chartType: 'AreaChart'
-
-    cols: [{id: 'date', type: 'date'}, {id: 'balance', type: 'number'}]
-
-    url: "/user/get_expenses_over_time_cumulative?query=#{urlParams['query']}"
-
-    processData: (d) -> d.map((e) -> 
-            date = new Date(e.date)
-            {c: [{v: date, f: prettyTime(date)}, {v: Number(e.expense)}]}
-        )
 
     optionsMainChart:
         colors: ['#0088CC']
@@ -42,5 +35,53 @@ options =
         vAxis:
             textPosition: 'none'
 
-$(activateMatchbox)
-createScrolledChart(options)
+
+cols = [{id: 'date', type: 'date'}, {id: 'balance', type: 'number'}]
+
+this.primeCharts = (data) ->
+    rows = data.map((e) -> 
+        date = new Date(e.date)
+        {c: [{v: date, f: prettyTime(date)}, {v: Number(e.expense)}]}
+    )
+
+    $(activateMatchbox)
+    createScrolledChart({cols: cols, rows: rows}, options)
+###
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    

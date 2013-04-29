@@ -9,15 +9,6 @@ prettyTime = (t) -> "#{t.toLocaleTimeString()} #{t.getMonth()+1}/#{t.getDate()}"
 options = 
     chartType: 'AreaChart'
 
-    cols: [{id: 'date', type: 'date'}, {id: 'balance', type: 'number'}]
-
-    url: '/user/get_expenses_over_time_cumulative'
-
-    processData: (d) -> d.map((e) -> 
-            date = new Date(e.date)
-            {c: [{v: date, f: prettyTime(date)}, {v: Number(e.expense), f:"$"+Number(e.expense).toFixed(2)}]}
-        )
-
     optionsMainChart:
         colors: ['#0088CC']
         legend: 
@@ -42,10 +33,25 @@ options =
         vAxis:
             textPosition: 'none'
 
-$(activateMatchbox)
-createScrolledChart(options)
 
+cols = [{id: 'date', type: 'date'}, {id: 'balance', type: 'number'}]
 
+this.primeCharts = (data) ->
+    rows = data.map((e) -> 
+            date = new Date(e.date)
+            {c: 
+                [
+                    {v: date, f: prettyTime(date)}, 
+                    {   
+                        v: Number(e.total), 
+                        f: "#{e.description}\nCost: $#{e.expense.toFixed(2)}\nTotal: $#{e.total.toFixed(2)}"
+                    }
+                ]
+            }
+    )
+    
+    $(activateMatchbox)
+    createScrolledChart({cols: cols, rows: rows}, options)
 
 
 ###
@@ -206,4 +212,13 @@ $(document).ready(() ->
     $('.active a').click(() -> false)
     drawCharts()
 )
+
+            console.debug(e.expense)
+            console.debug(typeof e.expense)
+            console.debug(e.expense.toFixed)
+            console.debug(e.expense.toFixed(2))
+            console.debug(e.total)
+            console.debug(typeof e.total)
+            console.debug(e.total.toFixed)
+            console.debug(e.total.toFixed(2))
 ###

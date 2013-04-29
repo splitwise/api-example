@@ -1,11 +1,10 @@
-<div id='data'></div>
 <%= render partial: 'user/top_menu', object: :expenses %>
 <%= javascript_include_tag "oauth_expenses" %>
-
+<%= render partial: 'create_charts' %>
 <div id='main-container-outer'>
     <div id='main-container'>
         <div id='side-menu-container'>
-            <%= render partial: 'user/expenses_side_menu', object: :total %>
+            <%= render partial: 'user/expenses_side_menu', object: :matching %>
         </div>
         <div id='content-container'>
             <div id='main-chart-container'>

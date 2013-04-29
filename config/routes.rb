@@ -1,24 +1,16 @@
 ApiExample::Application.routes.draw do
-  get "user/expenses_by_category"
-  get "user/get_expenses_by_category"
-
-  get "user/expenses_over_time"
-  get "user/get_expenses_over_time_cumulative"
-  get "user/get_expenses_over_time"
-
-  get "user/balances_over_time_with_friends"
-  get "user/get_balances_over_time_with_friends"
-
-  get "user/balance_over_time"
-  get "user/get_balance_over_time"
-
-  get "user/expenses_matching"
-  get "user/get_expenses_matching"
-
   match "user/login", :as => :login
   match "user/callback"
   match "user/logout"
   root :to => 'user#welcome'
+  
+  get "user/balance_over_time"
+  get "user/balances_over_time_with_friends"
+  get "user/expenses_over_time"
+  get "user/expenses_by_category"
+  get "user/expenses_by_category_over_time"
+  get "user/expenses_matching"
+  
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

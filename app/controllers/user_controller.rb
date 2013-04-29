@@ -7,20 +7,6 @@ class UserController < ApplicationController
     end
   end
 
-  def after_callback
-    redirect_to action: 'balance_over_time'
-  end
-
-  def after_logout
-    redirect_to action: 'welcome'
-  end
-
-  def welcome
-    if session[:access_token]
-      after_callback
-    end
-  end
-
   def login
     @consumer = OAuth::Consumer.new(ENV["SPLITWISE_API_KEY"], ENV["SPLITWISE_API_SECRET"], {
       :site               => ENV["SPLITWISE_SITE"],
@@ -36,11 +22,6 @@ class UserController < ApplicationController
     redirect_to @request_token.authorize_url
   end
 
-  def logout
-    session[:access_token] = nil
-    after_logout
-  end
-
   def callback
     if session[:request_token]
       session[:access_token] = session[:request_token].get_access_token(:oauth_verifier => params[:oauth_verifier])
@@ -50,22 +31,58 @@ class UserController < ApplicationController
     end
   end
 
+  def after_callback
+    redirect_to action: 'balance_over_time'
+  end
+
+  def logout
+    session[:access_token] = nil
+    after_logout
+  end
+
+  def after_logout
+    redirect_to action: 'welcome'
+  end
+
+  # Actions with views
+  def welcome
+    if session[:access_token]
+      after_callback
+    end
+  end
+
   def balance_over_time
+    @title = "Api Example \u00B7 Balance"
+    @data = JSON.unparse(User.new(session[:access_token]).get_balance_over_time)
   end
 
   def balances_over_time_with_friends
+    @title = "Api Example \u00B7 Balance with friends"
+    @data = JSON.unparse(User.new(session[:access_token]).get_balances_over_time_with_friends)
   end
 
   def expenses_over_time
+    @title = "Api Example \u00B7 Expenses"
+    @data = JSON.unparse(User.new(session[:access_token]).get_expenses_over_time_cumulative)
   end
 
   def expenses_by_category
+    @title = "Api Example \u00B7 Expenses by category"
+    @data = JSON.unparse(User.new(session[:access_token]).get_expenses_by_category)
+  end
+
+  def expenses_by_category_over_time
+    @title = "Api Example \u00B7 Category history"
+    @data = JSON.unparse(User.new(session[:access_token]).get_expenses_by_category_over_time_cumulative)
   end
 
   def expenses_matching
-    @data = User.new(session[:access_token]).get_expenses_matching(params[:query])
+    @title = "Api Example \u00B7 Search an expense"
+    @data = JSON.unparse(User.new(session[:access_token]).get_expenses_matching_cumulative(params[:query]))
   end
+end
 
+=begin
   def get_balance_over_time
     if params[:format] == 'google-charts'
       render text: JSON.unparse(User.new(session[:access_token]).get_balance_over_time_google_charts_format)
@@ -93,4 +110,4 @@ class UserController < ApplicationController
   def get_expenses_matching 
     render text: JSON.unparse(User.new(session[:access_token]).get_expenses_matching(params[:query]))
   end
-end
+=end

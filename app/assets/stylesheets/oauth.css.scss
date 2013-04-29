@@ -71,7 +71,8 @@ body {
 
     .top-menu-item.logout {
         margin-right: 2em;
-        float: right;
+        position: absolute;
+        right: 0;
     }
 
 }
@@ -225,38 +226,74 @@ div#film {
 
 #matchbox-container {
     background-color: #FFF;
-    border-radius: $standard-border-radius/2;
+    border-radius: 1em;
     position: absolute;
     top: 0;
     left: 100%;
     visibility: hidden;
     z-index: 2;
     -webkit-transform: translate3d(0px, 0px, 0px);
-    box-shadow: 0.2em 0.2em 0.5em 0 #666;
+    box-shadow: 0.2em 0.2em 0.5em 0.2em rgba(0, 0, 0, 0.4);
+    width: 16em;
+    height: 35px; /* I matched this to a list item's height. */
     
     #matchbox-nub {
         background-color: #FFF;
-        /*box-shadow: 0 0 0.2em;*/
+        box-shadow: -0.3em -0.25em 0.6em 0 rgba(0, 0, 0, 0.2);
         position: absolute;
-        -webkit-transform: matrix(1, -1, 1, 1, 0, 8) translate3d(0px, 0px, 0px);
-        -moz-transform: matrix(0.5, -0.5, 0.5, 0.5, 0, 0);
-        -ms-transform: matrix(0.5, -0.5, 0.5, 0.5, 0, 0);
+        -webkit-transform: matrix(0.3535533905932738, -0.3535533905932738, 0.3535533905932738, 0.3535533905932738, -13.3, 0);
+        -moz-transform: matrix(0.3535533905932738, -0.3535533905932738, 0.3535533905932738, 0.3535533905932738, -13.3, 0);
+        -ms-transform: matrix(0.3535533905932738, -0.3535533905932738, 0.3535533905932738, 0.3535533905932738, -13.3, 0);
         z-index: -1;
-        width: 1em; 
-        height: 1em;
+        width: 35px;    /* I matched this to a list item's height. */
+        height: 35px;   /* I matched this to a list item's height. */
     }
 
     #matchbox {
-        margin: 0.4em;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto 0.4em;
         z-index: 2;
-        -webkit-transform: translate3d(0px, 0px, 0px);
-        input {
+        height: 23px; /* I matched this to the height of the inner content. */
+        .input {
+            height: 21px;   
+            width: 12em;
+            display: inline-block;
+            font-size: 0.8em;
+            border: 1px solid #ccc;
+            padding: 0 0.5em;
+        }
+        .submit {
+            background-color: #08C; 
+            display: inline-block;
+            cursor: pointer;
+            border-radius: 1em;
+            color: #FFF;
+            padding: 0.3em 0.8em;
+            font-size: 0.8em;
+
+            &:hover {
+                background-color: #006FAA;
+                color: #eee;
+            }
+
+            &:active {
+                background-color: #005580;
+                color: #ccc;
+            }
+        }
+    }
+}
+
+.floater {
+/*            height: 2em;
+            display: inline-block;
             font-family: "Lato", "Lucida Grande", "Verdana", "Helvetica";
             border-radius: $standard-border-radius/2;
             border-width: 1px;
             height: 1.5em;
-            width: 12em;    
-            padding: 0 0.5em;
-        }
-    }
+            padding: 0 0.5em;*/
+    display: inline-block;
 }
