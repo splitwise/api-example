@@ -2,7 +2,8 @@
     console.debug(<%=raw @data %>);
     primeCharts(<%=raw @data %>);
 
-    /*that = this;
+    /*Uncomment this to see a funny bug.
+    that = this;
     $(document).ready(function () {
         console.debug('I begin to prime the charts.');
         that.primeCharts(<%=raw @data %>);
