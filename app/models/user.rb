@@ -131,7 +131,7 @@ class User
     def get_current_balances_with_friends
         id = get_current_user_id
         d = get_current_user_id
-        friends = {}
+        friends = Hash.new(-1)
         each_friendship do |friendship|
             candidates = friendship['users'].reject{|u| u['id'] == id}
             throw "I find not 1 but #{candidates.length} other users in a friendship." unless candidates.length == 1
@@ -143,11 +143,12 @@ class User
     def get_balances_over_time_with_friends
         id = get_current_user_id
         current_balances = get_current_balances_with_friends
+        friend_keys = current_balances.keys.sort!
         balance_records = []
         each_expense_newest_to_oldest do |expense|
             balance_records.push({
                                     'date' => expense['date'],
-                                    'balances' => current_balances.values_at(*current_balances.keys.sort!)
+                                    'balances' => current_balances.values_at(*friend_keys)
                                  })
             expense['repayments'].each do |repayment|
                 if repayment['from'] == id
@@ -292,6 +293,7 @@ end
 
 
 #No longer useful:
+
 =begin
     def self.get_net_balances_over_time access_token
         expenses = []
@@ -397,4 +399,15 @@ end
             'rows' => rows
         }
     end
+=end
+
+
+=begin
+    def purge_deleted_friends hash #NB: this modifies the hash.
+        hash.delete_if do |key, _|
+            key == -1
+        end
+    end
+
+    private :purge_deleted_friends
 =end
