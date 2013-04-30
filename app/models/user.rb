@@ -16,7 +16,10 @@ class User
 
     ['get_current_user', 'get_friendships'].each do |method|
         define_method method.to_sym do
-            JSON.parse(@access_token.get(API_URL+method).body)
+            data = @access_token.get(API_URL+method)
+            body = data.body
+            parsed = JSON.parse(body)
+            parsed
         end
     end
 

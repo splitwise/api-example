@@ -3,9 +3,7 @@
     menu_items = [['total', 'Total', '/user/expenses_over_time'],
                   ['by-category', 'By Category', '/user/expenses_by_category'], 
                   ['by-category-over-time', 'Category History', '/user/expenses_by_category_over_time'],
-                  ['matching', 'Search an expense', '#'],
-                  ['more', 'More', '#'],
-                  ['options', 'Options', '#']
+                  ['matching', 'Search an expense', '#']
                   ].map do |id, name, link|
         result = {id: id, name: name, link: link}
         if expenses_side_menu.to_s == id

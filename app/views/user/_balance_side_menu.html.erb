@@ -1,10 +1,7 @@
 <%= 
 
     menu_items = [['total', 'Total', '/user/balance_over_time'], 
-                  ['with-friends', 'With Friends', '/user/balances_over_time_with_friends'],
-                  ['many', 'Many', '#'], 
-                  ['exciting', 'Exciting', '#'],
-                  ['options', 'Options', '#']
+                  ['with-friends', 'With Friends', '/user/balances_over_time_with_friends']
                   ].map do |id, name, link|
         result = {id: id, name: name, link: link}
         if balance_side_menu.to_s == id
