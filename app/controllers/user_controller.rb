@@ -2,35 +2,25 @@ class UserController < ApplicationController
   before_filter :check_for_credentials, except: [:login, :callback, :welcome]
   
   def check_for_credentials
-    unless session[:access_token]
+    unless access_token
       redirect_to login_path
     end
   end
 
   def login
-    @consumer = OAuth::Consumer.new(ENV["SPLITWISE_API_KEY"], ENV["SPLITWISE_API_SECRET"], {
-      :site               => ENV["SPLITWISE_SITE"],
-      :scheme             => :header,
-      :http_method        => :post,
-      :authorize_path     => ENV["SPLITWISE_AUTHORIZE_URL"],
-      :request_token_path => ENV["SPLITWISE_REQUEST_TOKEN_URL"],
-      :access_token_path  => ENV["SPLITWISE_ACCESS_TOKEN_URL"]
-    })
-
-    @request_token = @consumer.get_request_token
-    session[:request_token] = @request_token
-    puts session.to_yaml
+    @request_token = consumer.get_request_token
+    Rails.cache.write(@request_token.token, @request_token.secret)
     redirect_to @request_token.authorize_url
   end
 
   def callback
-    puts session.to_yaml
-    if session[:request_token]
-      session[:access_token] = session[:request_token].get_access_token(:oauth_verifier => params[:oauth_verifier])
-      after_callback
-    else
-      render :text => "Looks like something went wrong - sorry!"
-    end
+    request_token = OAuth::RequestToken.new(consumer, params[:oauth_token], Rails.cache.read(params[:oauth_token]))
+    access_token = request_token.get_access_token(:oauth_verifier => params[:oauth_verifier])
+    session[:access_token] = access_token.token
+    session[:access_token_secret] = access_token.secret
+    after_callback
+  rescue
+    render :text => "Looks like something went wrong - sorry!"
   end
 
   def after_callback
@@ -48,39 +38,62 @@ class UserController < ApplicationController
 
   # Actions with views
   def welcome
-    if session[:access_token]
+    if access_token
       after_callback
     end
   end
 
   def balance_over_time
     @title = "Api Example \u00B7 Balance"
-    @data = JSON.unparse(User.new(session[:access_token]).get_balance_over_time)
+    @data = JSON.unparse(current_user.get_balance_over_time)
   end
 
   def balances_over_time_with_friends
     @title = "Api Example \u00B7 Balance with friends"
-    @data = JSON.unparse(User.new(session[:access_token]).get_balances_over_time_with_friends)
+    @data = JSON.unparse(current_user.get_balances_over_time_with_friends)
   end
 
   def expenses_over_time
     @title = "Api Example \u00B7 Expenses"
-    @data = JSON.unparse(User.new(session[:access_token]).get_expenses_over_time_cumulative)
+    @data = JSON.unparse(current_user.get_expenses_over_time_cumulative)
   end
 
   def expenses_by_category
     @title = "Api Example \u00B7 Expenses by category"
-    @data = JSON.unparse(User.new(session[:access_token]).get_expenses_by_category)
+    @data = JSON.unparse(current_user.get_expenses_by_category)
   end
 
   def expenses_by_category_over_time
     @title = "Api Example \u00B7 Category history"
-    @data = JSON.unparse(User.new(session[:access_token]).get_expenses_by_category_over_time_cumulative)
+    @data = JSON.unparse(current_user.get_expenses_by_category_over_time_cumulative)
   end
 
   def expenses_matching
     @title = "Api Example \u00B7 Search an expense"
-    @data = JSON.unparse(User.new(session[:access_token]).get_expenses_matching_cumulative(params[:query]))
+    @data = JSON.unparse(current_user.get_expenses_matching_cumulative(params[:query]))
+  end
+
+  private
+
+  def consumer
+    @consumer ||= OAuth::Consumer.new(ENV["SPLITWISE_API_KEY"], ENV["SPLITWISE_API_SECRET"], {
+      :site               => ENV["SPLITWISE_SITE"],
+      :scheme             => :header,
+      :http_method        => :post,
+      :authorize_path     => ENV["SPLITWISE_AUTHORIZE_URL"],
+      :request_token_path => ENV["SPLITWISE_REQUEST_TOKEN_URL"],
+      :access_token_path  => ENV["SPLITWISE_ACCESS_TOKEN_URL"]
+    })
+  end
+
+  def access_token
+    if session[:access_token]
+      @access_token ||= OAuth::AccessToken.new(consumer, session[:access_token], session[:access_token_secret])
+    end
+  end
+
+  def current_user
+    @current_user ||= User.new(access_token)
   end
 end
 
