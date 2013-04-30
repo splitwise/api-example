@@ -72,6 +72,9 @@ body {
     .top-menu-item.logout {
         margin-right: 2em;
         position: absolute;
+        display: inline-block;
+        margin-bottom: -1px;
+        padding-bottom: -1px;
         right: 0;
     }
 
@@ -296,4 +299,87 @@ div#film {
             height: 1.5em;
             padding: 0 0.5em;*/
     display: inline-block;
+}
+
+.welcome#content-container {
+
+    #content {
+        position: relative;
+        width: -moz-fit-content;
+        width: intrinsic;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        white-space: nowrap;
+        
+        #main-text-container {
+            display: inline-block;
+            vertical-align: top;
+            margin-top: 14em;
+            white-space: normal;
+            
+            #main-text {
+                width: 20em;
+                text-align: left;
+                padding: 0 0 0 2em;
+
+                p.elaboration {
+                    font-size: 0.7em;
+                    color: #676767;
+
+                }
+
+                a.authorize {
+                    $margin-top: 1em;
+                    $press-displacement: 0.25em;
+                    $side-height: 0.4em;
+                    $under-shadow-color: rgba(0, 0, 0, 0.5);
+
+                    display: inline-block;
+                    margin-top: $margin-top;
+                    padding: 0.5em 1em;
+                    border-radius: 1em;
+                    background-color: #5BC5A7;
+                    color: #FFF;
+                    text-decoration: none;
+                    text-align: center;
+                    box-shadow: 0 $side-height 0 0 #676767, 
+                                0 $side-height 6px 2px $under-shadow-color;
+                    text-shadow: 0 -1px 0 #44947D;
+                    border: 1px solid #5BC5A7;
+
+                    &:hover {
+                        box-shadow: 0 $side-height 0 0 #676767, 
+                                    0 $side-height 6px 2px $under-shadow-color,
+                                    inset 0 0 1em 0 rgba(255, 255, 255, 0.7);
+
+                    }
+
+                    &:active {
+                        box-shadow: 0 $side-height - $press-displacement 0 0 #676767, 
+                                    0 $side-height - $press-displacement 6px 0px $under-shadow-color,
+                                    inset 0 0 10px 0 #FFF;
+                        margin-top: $margin-top + $press-displacement;
+
+                    }
+                }
+
+            }
+
+        }
+
+        #main-image-container {
+            display: inline-block;
+            vertical-align: middle;
+            /*-moz-transform: scale(0.6, 0.6); */
+            
+            #main-image {
+                /*width: 60%;*/
+                /*matrix(1, 1, 1, 1, 0, 0); for some reason this doesn't work ...*/
+            }
+
+        }
+
+    }
+
 }

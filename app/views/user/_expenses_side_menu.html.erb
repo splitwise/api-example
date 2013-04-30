@@ -4,9 +4,9 @@
                   ['by-category', 'By Category', '/user/expenses_by_category'], 
                   ['by-category-over-time', 'Category History', '/user/expenses_by_category_over_time'],
                   ['matching', 'Search an expense', '#'],
-                  ['many', 'Many', '#'], 
-                  ['exciting', 'Exciting', '#'],
-                  ['options', 'Options', '#']].map do |id, name, link|
+                  ['more', 'More', '#'],
+                  ['options', 'Options', '#']
+                  ].map do |id, name, link|
         result = {id: id, name: name, link: link}
         if expenses_side_menu.to_s == id
             result[:active] = true
