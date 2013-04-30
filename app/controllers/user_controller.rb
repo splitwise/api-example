@@ -19,10 +19,12 @@ class UserController < ApplicationController
 
     @request_token = @consumer.get_request_token
     session[:request_token] = @request_token
+    puts session.to_yaml
     redirect_to @request_token.authorize_url
   end
 
   def callback
+    puts session.to_yaml
     if session[:request_token]
       session[:access_token] = session[:request_token].get_access_token(:oauth_verifier => params[:oauth_verifier])
       after_callback
@@ -36,7 +38,7 @@ class UserController < ApplicationController
   end
 
   def logout
-    session[:access_token] = nil
+    reset_session
     after_logout
   end
 
