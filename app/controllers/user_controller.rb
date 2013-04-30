@@ -44,32 +44,32 @@ class UserController < ApplicationController
   end
 
   def balance_over_time
-    @title = "Api Example \u00B7 Balance"
+    @title = "Balance"
     @data = JSON.unparse(current_user.get_balance_over_time)
   end
 
   def balances_over_time_with_friends
-    @title = "Api Example \u00B7 Balance with friends"
+    @title = "Balance with friends"
     @data = JSON.unparse(current_user.get_balances_over_time_with_friends)
   end
 
   def expenses_over_time
-    @title = "Api Example \u00B7 Expenses"
+    @title = "Expenses"
     @data = JSON.unparse(current_user.get_expenses_over_time_cumulative)
   end
 
   def expenses_by_category
-    @title = "Api Example \u00B7 Expenses by category"
+    @title = "Expenses by category"
     @data = JSON.unparse(current_user.get_expenses_by_category)
   end
 
   def expenses_by_category_over_time
-    @title = "Api Example \u00B7 Category history"
+    @title = "Category history"
     @data = JSON.unparse(current_user.get_expenses_by_category_over_time_cumulative)
   end
 
   def expenses_matching
-    @title = "Api Example \u00B7 Search an expense"
+    @title = "Search an expense"
     @data = JSON.unparse(current_user.get_expenses_matching_cumulative(params[:query]))
   end
 
