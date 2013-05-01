@@ -1,10 +1,12 @@
 ---
-splitwise-logo.png: splitwise-logo-d013ba5807d763d76952b9d67145e19d.png
-splitwise-logo/index.png: splitwise-logo-d013ba5807d763d76952b9d67145e19d.png
-application.js: application-56cfea02e271e74c2811fb52cbe42178.js
-application/index.js: application-56cfea02e271e74c2811fb52cbe42178.js
-application.css: application-f96de4bd5840778f2725cd8431ac048d.css
-application/index.css: application-f96de4bd5840778f2725cd8431ac048d.css
+splitwise-logo-large.png: splitwise-logo-large-d013ba5807d763d76952b9d67145e19d.png
+splitwise-logo-large/index.png: splitwise-logo-large-d013ba5807d763d76952b9d67145e19d.png
+splitwise-logo-medium.png: splitwise-logo-medium-d013ba5807d763d76952b9d67145e19d.png
+splitwise-logo-medium/index.png: splitwise-logo-medium-d013ba5807d763d76952b9d67145e19d.png
+application.js: application-b5c3aca66b54110e9c4acb077fd4326e.js
+application/index.js: application-b5c3aca66b54110e9c4acb077fd4326e.js
+application.css: application-a7511ae48ac49fe05c5e46e9d37e5c9b.css
+application/index.css: application-a7511ae48ac49fe05c5e46e9d37e5c9b.css
 fontawesome-webfont.eot: fontawesome-webfont-635909f146e208b3509acdf3b154bf0d.eot
 fontawesome-webfont/index.eot: fontawesome-webfont-635909f146e208b3509acdf3b154bf0d.eot
 fontawesome-webfont.ttf: fontawesome-webfont-6a4e273908b7e43d9e479d38b8ae5957.ttf

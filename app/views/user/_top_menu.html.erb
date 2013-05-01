@@ -1,10 +1,28 @@
 <ul id='top-menu'>
     <% [
-        ['balance', 'Balance', '/user/balance_over_time'],
-        ['expenses', 'Expenses', '/user/expenses_over_time']
-       ].each do |id, name, link| %>
+        ['balance', 'Balance', '/user/balance_over_time', 'Trace your balance over time.'],
+        ['with-friends', 'Friends', '/user/balances_over_time_with_friends', 'Track your balance with each of your friends.'],
+        ['expenses', 'Expenses', '/user/expenses_over_time', 'See the cumulative graph of everything you\'ve spent.'],
+        ['by-category', 'Categories', '/user/expenses_by_category', 'Break down your spending into categories.'],
+        ['by-category-over-time', 'Category History', '/user/expenses_by_category_over_time', 'See how your spending in different categories has changed over time.'],
+        ['matching', 'Search', '#', 'Search for an expense to see it graphed: ']
+       ].each do |id, name, link, description| %>
     <li class='top-menu-item <%= id %> <%= 'active' if id == top_menu.to_s %>'>
         <a href='<%= link %>'><%= name %></a>
+        <div class='infobox-container'>
+            <div class='infobox'>
+                <%=raw description %>
+                <% if id == 'matching' %>
+                <div id='matchbox'>
+                    <input placeholder='Starbucks' class='input'>
+                    </input>
+                    <div class='submit'>
+                        Search
+                    </div>
+                </div>
+                <% end %>
+            </div>
+        </div>
     </li>
     <% end %>
     <li class='top-menu-item logout'>

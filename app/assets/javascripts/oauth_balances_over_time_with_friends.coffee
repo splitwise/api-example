@@ -10,10 +10,10 @@ options =
     optionsMainChart:
         hAxis:
             textStyle: 
-                fontName: 'Lucida Grande'
+                fontName: 'Lato, Lucida Grande'
         vAxis:
             textStyle:
-                fontName: 'Lucida Grande'
+                fontName: 'Lato, Lucida Grande'
     
     optionsScrollChart:
         backgroundColor: '#F5F5F5'

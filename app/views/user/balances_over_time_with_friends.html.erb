@@ -1,12 +1,12 @@
-<%= render partial: 'user/top_menu', object: :balance %>
+<%= render partial: 'user/top_menu', object: :'with-friends' %>
 <%= javascript_include_tag "oauth_balances_over_time_with_friends" %>
 <%= render partial: 'create_charts' %>
 <div id='main-container-outer'>
     <div id='main-container'>
-        <div id='side-menu-container'>
+<!--         <div id='side-menu-container'>
             <%= render partial: 'user/balance_side_menu', object: :'with-friends' %>
         </div>
-        <div id='content-container'>
+ -->        <div id='content-container'>
             <div id='main-chart-container'>
                 <div id='main-chart'></div>
             </div>

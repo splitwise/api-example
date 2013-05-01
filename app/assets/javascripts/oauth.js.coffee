@@ -7,6 +7,7 @@
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
 this.activateMatchbox = () ->
+    ###
     $('.side-menu-item.matching').click(() ->
         $('.side-menu-item.matching #matchbox-container').css('visibility', 'visible')
         false
@@ -14,6 +15,7 @@ this.activateMatchbox = () ->
     $(document).click(() ->
         $('.side-menu-item.matching #matchbox-container').css('visibility', 'hidden')
     )
+    ###
     $('#matchbox .submit').click(() ->
         window.location.href = "/user/expenses_matching?query=#{$('#matchbox input').val()}"
     )

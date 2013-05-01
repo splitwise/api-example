@@ -15,10 +15,10 @@ options =
             position: 'none'
         hAxis:
             textStyle: 
-                fontName: 'Lucida Grande'
+                fontName: 'Lato, Lucida Grande'
         vAxis:  
             textStyle:
-                fontName: 'Lucida Grande'
+                fontName: 'Lato, Lucida Grande'
     
     optionsScrollChart:
         colors: ['#0088CC']

@@ -2,8 +2,8 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-$side-menu-width: 12em;
-$side-menu-margin-right: 1em;
+$search-stack-width: 12em;
+$search-stack-margin-right: 1em;
 $main-chart-width: 40em;
 
 $standard-border-radius: 0.4em;
@@ -11,22 +11,6 @@ $standard-border-radius: 0.4em;
 
 body {
     font-family: "Lato", "Lucida Grande", "Verdana", "Helvetica";
-}
-
-#main-container {
-    margin: 0 auto;
-    width: intrinsic;
-    width: -moz-fit-content;
-
-    #side-menu-container {
-        float: left;
-        width: $side-menu-width;
-    }
-
-    #content-container {
-        margin-left: $side-menu-width + $side-menu-margin-right;
-    }
-
 }
 
 #top-menu {
@@ -41,12 +25,43 @@ body {
         margin-bottom: -1px;
         border-top-left-radius: $standard-border-radius;
         border-top-right-radius: $standard-border-radius;
+        
         a {
             padding: 1em 1em;
             color: #0088CC;
             text-decoration: none;
             display: block;
         }
+
+        .infobox-container {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            z-index: 1;
+            padding-top: 0.4em;
+
+            .infobox {
+                width: 12em;
+                padding: 1em 1em 1em 1em;
+                background-color: #fff;
+                border: 1px solid #ddd;
+                border-radius: $standard-border-radius;
+                white-space: normal;
+                box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+
+            }
+
+
+        }
+
+        &:hover:not(.active) .infobox-container {
+            visibility: visible;
+            transition: opacity 0.5s 0.3s;
+            opacity: 1;
+
+        }
+
+
     }
 
     .top-menu-item:not(.active) {
@@ -70,66 +85,44 @@ body {
     }
 
     .top-menu-item.logout {
-        margin-right: 2em;
-        position: absolute;
         display: inline-block;
-        margin-bottom: -1px;
-        padding-bottom: -1px;
+        position: absolute;
         right: 0;
+        top: 17px;              /* I hacked this to the proper height. */
+        margin-right: 2em;
     }
 
-}
-
-#side-menu {
-    list-style: none;
-    border-radius: $standard-border-radius;
-    border: 1px solid #ddd;
-    margin: 0;
-    padding: 0;
-
-    .side-menu-item {
-        background-color: transparent;
-        border-bottom: 1px solid #ddd;
-
-        &:first-child {
-            border-top-right-radius: $standard-border-radius;
-            border-top-left-radius: $standard-border-radius;
-        }
-
-        &:last-child {
-            border-bottom-right-radius: $standard-border-radius;
-            border-bottom-left-radius: $standard-border-radius;
-            border-bottom: none;
-        }
-
-        &:hover {
-            background-color: rgba(0, 0, 0, 0.0625);
-
-            a {
-                color: #005580;
-            }
-        }
-
-        &.active {
-            background-color: rgba(0, 136, 204, 1);
-
-            a {
-                color: #FFF;
-            }
-
-        }
-
-        a {
+    .top-menu-item #matchbox {
+        z-index: 2;
+        margin-top: 0.4em;
+        .input {
             display: inline-block;
-            width: $side-menu-width - 1em;
-            padding: 0.5em 0 0.5em 1em;
-
-            background-color: transparent;
-            color: #0088CC;
-            text-decoration: none;
-
+            height: 21px;   
+            width: 8em;
+            margin-right: 0.2em;
+            font-size: 0.8em;
+            border: 1px solid #ccc;
+            padding: 0 0.5em;
         }
+        .submit {
+            background-color: #08C; 
+            display: inline-block;
+            cursor: pointer;
+            border-radius: 1em;
+            color: #FFF;
+            padding: 0.3em 0.8em;
+            font-size: 0.8em;
 
+            &:hover {
+                background-color: #006FAA;
+                color: #eee;
+            }
+
+            &:active {
+                background-color: #005580;
+                color: #ccc;
+            }
+        }
     }
 
 }
@@ -223,72 +216,6 @@ div#film {
 
 }
 
-.side-menu-item.matching {
-    position: relative;    
-}
-
-#matchbox-container {
-    background-color: #FFF;
-    border-radius: 1em;
-    position: absolute;
-    top: 0;
-    left: 100%;
-    visibility: hidden;
-    z-index: 2;
-    -webkit-transform: translate3d(0px, 0px, 0px);
-    box-shadow: 0.2em 0.2em 0.5em 0.2em rgba(0, 0, 0, 0.4);
-    width: 16em;
-    height: 35px; /* I matched this to a list item's height. */
-    
-    #matchbox-nub {
-        background-color: #FFF;
-        box-shadow: -0.3em -0.25em 0.6em 0 rgba(0, 0, 0, 0.2);
-        position: absolute;
-        -webkit-transform: matrix(0.3535533905932738, -0.3535533905932738, 0.3535533905932738, 0.3535533905932738, -13.3, 0);
-        -moz-transform: matrix(0.3535533905932738, -0.3535533905932738, 0.3535533905932738, 0.3535533905932738, -13.3, 0);
-        -ms-transform: matrix(0.3535533905932738, -0.3535533905932738, 0.3535533905932738, 0.3535533905932738, -13.3, 0);
-        z-index: -1;
-        width: 35px;    /* I matched this to a list item's height. */
-        height: 35px;   /* I matched this to a list item's height. */
-    }
-
-    #matchbox {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        margin: auto 0.4em;
-        z-index: 2;
-        height: 23px; /* I matched this to the height of the inner content. */
-        .input {
-            height: 21px;   
-            width: 12em;
-            display: inline-block;
-            font-size: 0.8em;
-            border: 1px solid #ccc;
-            padding: 0 0.5em;
-        }
-        .submit {
-            background-color: #08C; 
-            display: inline-block;
-            cursor: pointer;
-            border-radius: 1em;
-            color: #FFF;
-            padding: 0.3em 0.8em;
-            font-size: 0.8em;
-
-            &:hover {
-                background-color: #006FAA;
-                color: #eee;
-            }
-
-            &:active {
-                background-color: #005580;
-                color: #ccc;
-            }
-        }
-    }
-}
 
 .floater {
 /*            height: 2em;
@@ -300,6 +227,78 @@ div#film {
             padding: 0 0.5em;*/
     display: inline-block;
 }
+
+/* These styles pertain to the matching chart: */
+#main-container {
+    margin: 0 auto;
+    width: intrinsic;
+    width: -moz-fit-content;
+
+    #search-stack-container {
+        float: left;
+        width: $search-stack-width;
+    }
+
+    #matching-content-container {
+        margin-left: $search-stack-width + $search-stack-margin-right;
+    }
+
+}
+
+#search-stack {
+    list-style: none;
+    border-radius: $standard-border-radius;
+    border: 1px solid #ddd;
+    margin: 0;
+    padding: 0;
+
+    .search-stack-item {
+        background-color: transparent;
+        border-bottom: 1px solid #ddd;
+
+        &:first-child {
+            border-top-right-radius: $standard-border-radius;
+            border-top-left-radius: $standard-border-radius;
+        }
+
+        &:last-child {
+            border-bottom-right-radius: $standard-border-radius;
+            border-bottom-left-radius: $standard-border-radius;
+            border-bottom: none;
+        }
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.0625);
+
+            a {
+                color: #005580;
+            }
+        }
+
+        &.active {
+            background-color: rgba(0, 136, 204, 1);
+
+            a {
+                color: #FFF;
+            }
+
+        }
+
+        a {
+            display: inline-block;
+            width: $search-stack-width - 1em;
+            padding: 0.5em 0 0.5em 1em;
+
+            background-color: transparent;
+            color: #0088CC;
+            text-decoration: none;
+
+        }
+
+    }
+
+}
+
 
 .welcome#content-container {
 
@@ -383,3 +382,109 @@ div#film {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+#matchbox-container {
+    background-color: #FFF;
+    border-radius: 1em;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    visibility: hidden;
+    z-index: 2;
+    -webkit-transform: translate3d(0px, 0px, 0px);
+    box-shadow: 0.2em 0.2em 0.5em 0.2em rgba(0, 0, 0, 0.4);
+    width: 16em;
+    height: 35px;
+    
+    #matchbox-nub {
+        background-color: #FFF;
+        box-shadow: -0.3em -0.25em 0.6em 0 rgba(0, 0, 0, 0.2);
+        position: absolute;
+        -webkit-transform: matrix(0.3535533905932738, -0.3535533905932738, 0.3535533905932738, 0.3535533905932738, -13.3, 0);
+        -moz-transform: matrix(0.3535533905932738, -0.3535533905932738, 0.3535533905932738, 0.3535533905932738, -13.3, 0);
+        -ms-transform: matrix(0.3535533905932738, -0.3535533905932738, 0.3535533905932738, 0.3535533905932738, -13.3, 0);
+        z-index: -1;
+        width: 35px;    
+        height: 35px;   
+    }
+
+    #matchbox {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        margin: auto 0.4em;
+        z-index: 2;
+        height: 23px; 
+        .input {
+            height: 21px;   
+            width: 12em;
+            display: inline-block;
+            font-size: 0.8em;
+            border: 1px solid #ccc;
+            padding: 0 0.5em;
+        }
+        .submit {
+            background-color: #08C; 
+            display: inline-block;
+            cursor: pointer;
+            border-radius: 1em;
+            color: #FFF;
+            padding: 0.3em 0.8em;
+            font-size: 0.8em;
+
+            &:hover {
+                background-color: #006FAA;
+                color: #eee;
+            }
+
+            &:active {
+                background-color: #005580;
+                color: #ccc;
+            }
+        }
+    }
+}
+*/
