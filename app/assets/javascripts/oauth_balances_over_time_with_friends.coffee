@@ -8,6 +8,9 @@ options =
     chartType: 'AreaChart'
 
     optionsMainChart:
+        legend:
+            textStyle: 
+                fontName: 'Lato, Lucida Grande'
         hAxis:
             textStyle: 
                 fontName: 'Lato, Lucida Grande'

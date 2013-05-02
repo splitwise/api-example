@@ -213,11 +213,13 @@ class User
         end
         expenses_records = []
         each_expense_and_share_newest_to_oldest do |expense, share|
-            expenses_records.push({
-                                    'date' => expense['date'],
-                                    'expenses' => current_expenses.values_at(*categories)
-                                 })
-            current_expenses[expense['category']['name']] -= share['owed_share'].to_f
+            unless expense['payment']
+                expenses_records.push({
+                                        'date' => expense['date'],
+                                        'expenses' => current_expenses.values_at(*categories)
+                                     })
+                current_expenses[expense['category']['name']] -= share['owed_share'].to_f
+            end
         end
         {
             'categories' => categories,
@@ -249,7 +251,7 @@ class User
         expenses
     end
 
-    def get_expenses_matching_cumulative query
+    def get_expenses_matching_cumulative query  # returns expenses in the form {'date' => ...,  'description' => ..., 'expense' => ..., 'total' => ...}
         total = 0
         expenses = get_expenses_matching query
         expenses.each do |e|

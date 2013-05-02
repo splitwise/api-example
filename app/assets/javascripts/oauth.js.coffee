@@ -6,19 +6,11 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
-this.activateMatchbox = () ->
-    ###
-    $('.side-menu-item.matching').click(() ->
-        $('.side-menu-item.matching #matchbox-container').css('visibility', 'visible')
-        false
-    )
-    $(document).click(() ->
-        $('.side-menu-item.matching #matchbox-container').css('visibility', 'hidden')
-    )
-    ###
+$(() -> 
     $('#matchbox .submit').click(() ->
         window.location.href = "/user/expenses_matching?query=#{$('#matchbox input').val()}"
     )
+)
 
 ### Example arguments:
 chartType = 'AreaChart'
@@ -110,7 +102,8 @@ this.createScrolledChart = (data, variable) ->
             return dates.all.length - 1
 
 
-    drawCharts = createCheckin(2, () ->
+    drawCharts = createCheckin((if google.visualization then 1 else 2), () ->
+        console.debug('createScrolledChart: all parallel prerequisites have loaded; I will now draw the charts.')
 
         spawnDates()
         elem.scrollChart = createScrollChart()
@@ -200,7 +193,8 @@ this.createScrolledChart = (data, variable) ->
 
 
     google.setOnLoadCallback(drawCharts)
-    google.load('visualization', '1', {packages: ['corechart']})
+    unless google.visualization
+        google.load('visualization', '1', {packages: ['corechart']})
 
     ###
     rows = undefined
@@ -220,3 +214,18 @@ this.createScrolledChart = (data, variable) ->
         drawCharts()
 
     )
+
+
+###
+this.activateMatchbox = () ->
+    $('.side-menu-item.matching').click(() ->
+        $('.side-menu-item.matching #matchbox-container').css('visibility', 'visible')
+        false
+    )
+    $(document).click(() ->
+        $('.side-menu-item.matching #matchbox-container').css('visibility', 'hidden')
+    )
+    $('#matchbox .submit').click(() ->
+        window.location.href = "/user/expenses_matching?query=#{$('#matchbox input').val()}"
+    )
+###

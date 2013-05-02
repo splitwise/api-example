@@ -1,16 +1,35 @@
-<%= render partial: 'user/top_menu', object: :matching %>
-<%= javascript_include_tag "oauth_expenses" %>
+<%= javascript_include_tag "oauth_expenses_matching" %>
 <%= render partial: 'create_charts' %>
+<%= render partial: 'user/top_menu', object: :matching %>
 <div id='main-container-outer'>
     <div id='main-container'>
 <!--         <div id='side-menu-container'>
             <%= render partial: 'user/expenses_side_menu', object: :matching %>
         </div>
  -->       
-        <div id='search-stack' class='well'>
-            
+        <div id='search-stack-container'>
+            <div id='search-stack' class='well'>
+                <li class='search-stack-item'>
+                    <div class='search-stack-item-content'>
+                        <span class='search-name'></span>
+                        <!-- <span class='delete-search'>x</span> -->
+                    </div>
+                </li>
+                <li class='search-stack-item matchbox'>
+                    <input placeholder='Starbucks' class='input'></input>
+                    <span class='submit'>
+                        Add
+                    </span>
+                </li>
+            </div>
         </div>
         <div id='matching-content-container'>
+            <div id="loading-film">
+                <div id="loading-film-message">
+                    <!--<%= image_tag "loading.gif" %>-->
+                    Loading
+                </div>
+            </div>
             <div id='main-chart-container'>
                 <div id='main-chart'></div>
             </div>

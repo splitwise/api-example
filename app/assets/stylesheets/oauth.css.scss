@@ -5,6 +5,11 @@
 $search-stack-width: 12em;
 $search-stack-margin-right: 1em;
 $main-chart-width: 40em;
+$bootstrap-blue: #0088CC;
+$bootstrap-blue-hover: #005580;
+$splitwise-green: #5BC5A7;
+$splitwise-green-hover: #E34234;
+$splitwise-gray: #676767;
 
 $standard-border-radius: 0.4em;
 
@@ -14,13 +19,29 @@ body {
 }
 
 #top-menu {
-    font-size: 1em;
-    border-bottom: 1px solid #ddd;
+    height: 5em;
+    padding: 0 0 0 1em;
     list-style: none;
+    border-bottom: 1px solid #ddd;
     white-space: nowrap;
+    font-size: 1em;
+
+    img {
+        position: absolute;
+    }
+
+    #title {
+        position: relative;
+        top: 15px;
+        margin: 0 1.5em 0 2.8em;
+        color: #444;
+        font-size: 1.7em;
+    }
 
     .top-menu-item {
         display: inline-block;
+        position: relative;
+        top: 28px;
         margin-left: 0.2em;
         margin-bottom: -1px;
         border-top-left-radius: $standard-border-radius;
@@ -28,7 +49,7 @@ body {
         
         a {
             padding: 1em 1em;
-            color: #0088CC;
+            color: $bootstrap-blue;
             text-decoration: none;
             display: block;
         }
@@ -61,6 +82,10 @@ body {
 
         }
 
+        &:nth-child(2) {
+            margin-left: 2em;
+
+        }
 
     }
 
@@ -68,7 +93,7 @@ body {
         &:hover {
             background: #EEEEEE;
             a {
-                color: #005580;
+                color: $bootstrap-blue-hover;
             }
         }    
     }
@@ -88,7 +113,7 @@ body {
         display: inline-block;
         position: absolute;
         right: 0;
-        top: 17px;              /* I hacked this to the proper height. */
+        top: 45px;              /* I hacked this to the proper height. */
         margin-right: 2em;
     }
 
@@ -119,7 +144,7 @@ body {
             }
 
             &:active {
-                background-color: #005580;
+                background-color: $bootstrap-blue-hover;
                 color: #ccc;
             }
         }
@@ -135,15 +160,12 @@ body {
 /* These styles pertain to the main chart: */
 #main-chart-container {
     padding: 0.4em;   
-    border: 1px solid #ccc; 
-}
-
-#main-chart-container:first-child {
+    border: 1px solid #ccc;
     border-top-right-radius: $standard-border-radius;
     border-top-left-radius: $standard-border-radius;
 }
 
-#main-chart-container:last-child {
+#main-chart-container :last-child {
     border-bottom-right-radius: $standard-border-radius;
     border-bottom-left-radius: $standard-border-radius;
 }
@@ -237,15 +259,19 @@ div#film {
     #search-stack-container {
         float: left;
         width: $search-stack-width;
+
     }
 
     #matching-content-container {
+        position: relative;
         margin-left: $search-stack-width + $search-stack-margin-right;
+
     }
 
 }
 
 #search-stack {
+    position: relative; /* this may solve the issue of a list item's being too wide when given a width of 100% */
     list-style: none;
     border-radius: $standard-border-radius;
     border: 1px solid #ddd;
@@ -254,11 +280,20 @@ div#film {
 
     .search-stack-item {
         background-color: transparent;
-        border-bottom: 1px solid #ddd;
+        border-width: 0;
+        border-top: 1px solid #ddd;
+        padding: 0;
+        z-index: 1;
+
+        &:not(.matchbox) {
+            width: 100%;
+
+        }
 
         &:first-child {
             border-top-right-radius: $standard-border-radius;
             border-top-left-radius: $standard-border-radius;
+            border-top: none;
         }
 
         &:last-child {
@@ -267,31 +302,33 @@ div#film {
             border-bottom: none;
         }
 
-        &:hover {
-            background-color: rgba(0, 0, 0, 0.0625);
-
-            a {
-                color: #005580;
-            }
-        }
-
-        &.active {
+        &.matchbox {
             background-color: rgba(0, 136, 204, 1);
+            padding: 0.5em 1em;
+            z-index: 100;
 
-            a {
-                color: #FFF;
+            .input {
+                width: 9em;
+
             }
 
+            .submit {
+                float: right;
+                padding: 0.05em 0.5em;
+                border-radius: 1em;
+                background-color: #fff;
+                color: #000; 
+            
+            }
         }
 
-        a {
-            display: inline-block;
-            width: $search-stack-width - 1em;
-            padding: 0.5em 0 0.5em 1em;
+        .search-stack-item-content {
+            padding: 0.5em 1em;
 
-            background-color: transparent;
-            color: #0088CC;
-            text-decoration: none;
+            .search-name {
+                text-overflow: '...';
+            
+            }
 
         }
 
@@ -299,6 +336,47 @@ div#film {
 
 }
 
+#loading-film {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.2s, opacity 0.2s;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    border-radius: $standard-border-radius;
+    background-color: rgba(0, 0, 0, 0.2);
+
+
+    &.show {
+        visibility: visible;
+        opacity: 1;
+        transition: opacity 0.2s;
+
+    }
+
+    #loading-film-message {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 6em;     /* I will change this later to fit the content. */
+        height: 1em;
+        margin: auto;   
+
+        img {
+            position: absolute;
+            top: 0;
+            left: 0;
+
+        }     
+
+    }
+
+}
 
 .welcome#content-container {
 
@@ -481,7 +559,7 @@ div#film {
             }
 
             &:active {
-                background-color: #005580;
+                background-color: $bootstrap-blue-hover;
                 color: #ccc;
             }
         }

@@ -13,6 +13,8 @@ options =
         colors: ['#0088CC']
         legend: 
             position: 'none'
+            textStyle:
+                fontName: 'Lato, Lucida Grande'
         hAxis:
             textStyle: 
                 fontName: 'Lato, Lucida Grande'
@@ -28,6 +30,8 @@ options =
             height: '100%'
         legend: 
             position: 'none'
+            textStyle:
+                fontName: 'Lato, Lucida Grande'
         hAxis:
             textPosition: 'none'
         vAxis:

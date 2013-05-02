@@ -10,6 +10,7 @@ ApiExample::Application.routes.draw do
   get "user/expenses_by_category"
   get "user/expenses_by_category_over_time"
   get "user/expenses_matching"
+  get "user/get_expenses_matching"
   
 
   # The priority is based upon order of creation:

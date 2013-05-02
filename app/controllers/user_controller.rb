@@ -73,6 +73,10 @@ class UserController < ApplicationController
     @data = JSON.unparse(current_user.get_expenses_matching_cumulative(params[:query]))
   end
 
+  def get_expenses_matching 
+    render text: JSON.unparse(current_user.get_expenses_matching_cumulative(params[:query]))
+  end
+
   private
 
   def consumer

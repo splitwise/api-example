@@ -1,6 +1,7 @@
 <script type="text/javascript">
+    console.debug(this.primeCharts)
     console.debug(<%=raw @data %>);
-    primeCharts(<%=raw @data %>);
+    this.primeCharts(<%=raw @data %>);
  
     /* Uncomment this to see a funny bug.
     that = this;

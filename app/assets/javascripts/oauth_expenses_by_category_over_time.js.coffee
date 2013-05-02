@@ -11,6 +11,9 @@ options =
     chartType: 'AreaChart'
 
     optionsMainChart:
+        legend:
+            textStyle: 
+                fontName: 'Lato, Lucida Grande'
         hAxis:
             textStyle: 
                 fontName: 'Lato, Lucida Grande'
@@ -31,8 +34,6 @@ options =
 
 cols = [{id: 'date', type: 'date'}]
 
-$(activateMatchbox)
-
 this.primeCharts = (d) ->
     categories = d.categories
     expenses_records = d.expenses
@@ -48,7 +49,10 @@ this.primeCharts = (d) ->
                                     v: date, 
                                     f: prettyTime(date)
                                 }
-                            ].concat(expenses_record.expenses.map((e) -> {v: e}))
+                            ].concat(expenses_record.expenses.map((e) -> {
+                                                                            v: e,
+                                                                            f: "$#{e.toFixed(2)}"
+                                                                         }))
                   })
 
     console.debug('I will create a scrolled chart...')

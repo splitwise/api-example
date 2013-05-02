@@ -11,7 +11,10 @@ createCheckin = (n, callback) -> () ->
 
 cols = [{id: 'Category', type: 'string'}, {id: 'Spending', type: 'number'}]
 rows = undefined
-options = {}
+options = 
+    legend:
+        textStyle: 
+            fontName: 'Lato, Lucida Grande'
 
 drawChart = createCheckin(2, () ->
     chart = new google.visualization.PieChart($('#main-chart')[0])
@@ -23,15 +26,13 @@ google.setOnLoadCallback(drawChart)
 google.load('visualization', '1', {packages: ['corechart']})
 
 this.primeCharts = (categories) ->
-    rows = ({c: [{v: category}, {v: spending}]} for category, spending of categories)
+    rows = ({c: [{v: category}, {v: spending, f: "$#{spending.toFixed(2)}"}]} for category, spending of categories)
 
     console.debug(rows)
     console.debug(categories)
 
     drawChart()
 
-
-$(activateMatchbox)
 
 $(document).ready(() -> 
 

@@ -13,6 +13,8 @@ options =
         colors: ['#0088CC']
         legend: 
             position: 'none'
+            textStyle: 
+                fontName: 'Lato, Lucida Grande'            
         hAxis:
             textStyle: 
                 fontName: 'Lato, Lucida Grande'
@@ -50,7 +52,6 @@ this.primeCharts = (data) ->
             }
     )
     
-    $(activateMatchbox)
     createScrolledChart({cols: cols, rows: rows}, options)
 
 
