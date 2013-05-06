@@ -200,23 +200,24 @@ SearchStackItem = (search) ->
 
 addSearchedExpenses = () ->
     search = $('#search-stack .matchbox .input').val()
-    $('#search-stack .matchbox .input').val('')
-    console.debug('search: ' + search)
-    chartLoading.start()
-    slideInSearchStackItem(SearchStackItem(search))
-    $.ajax({url: "/user/get_expenses_matching?query=#{search}"}).done((data) ->
-        searches.push({search: search, rows: JSON.parse(data)})
-        $('#main-chart').empty()
-        $('#scroll-chart').empty()
-        createScrolledChart(chartData(), options)
-        chartLoading.stop()
-    )
+    if search isnt ''
+        $('#search-stack .matchbox .input').val('')
+        console.debug('search: ' + search)
+        chartLoading.start()
+        slideInSearchStackItem(SearchStackItem(search))
+        $.ajax({url: "/user/get_expenses_matching?query=#{search}"}).done((data) ->
+            searches.push({search: search, rows: JSON.parse(data)})
+            $('#main-chart').empty()
+            $('#scroll-chart').empty()
+            createScrolledChart(chartData(), options)
+            chartLoading.stop()
+        )
 
 $(() ->
     first = $('.search-stack-item:first-child')
     first.find('.search-name').html(urlParams.query)
     sliding.searchItemHeight = $('.search-stack-item').outerHeight()
-    $('.search-stack-item:first-child').children('.delete-search').click(() -> slideOutSearchStackItem(this))
+    $('.search-stack-item:first-child').find('.delete-search').click(() -> slideOutSearchStackItem(this))
     $('#search-stack .matchbox .submit').click(addSearchedExpenses)
     $('#search-stack .matchbox .input').keypress((event) ->
         if event.which is 13

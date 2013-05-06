@@ -7,8 +7,24 @@
 # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
 $(() -> 
+    $('.top-menu-item.matching').click(() ->
+        console.debug('here')
+        $('#matchbox .input').focus()
+    )
+
     $('#matchbox .submit').click(() ->
         window.location.href = "/user/expenses_matching?query=#{$('#matchbox input').val()}"
+    )
+
+    infoboxes = $('.infobox-container')
+    $.each($('.top-menu-item'), (i, e) ->
+        unless $(e).hasClass('active')
+            $(infoboxes[i]).css('left', $(e).position().left)
+            $(e).hover((() ->
+                $(infoboxes[i]).addClass('show')
+            ),(() ->
+                $(infoboxes[i]).removeClass('show')
+            ))
     )
 )
 
