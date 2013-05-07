@@ -92,6 +92,7 @@ GEM
       multi_json (~> 1.0)
       multi_xml (~> 0.5)
       rack (~> 1.2)
+    pg (0.14.1)
     polyglot (0.3.3)
     rack (1.4.5)
     rack-cache (1.2)
@@ -162,6 +163,7 @@ DEPENDENCIES
   jquery-rails
   less-rails
   oauth-plugin (~> 0.4.0)
+  pg
   rails (= 3.2.11)
   sass-rails (~> 3.2.3)
   sqlite3

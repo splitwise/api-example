@@ -5,14 +5,18 @@ gem 'rails', '3.2.11'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3'
 gem "figaro"  # for local configuration settings that shouldn't be shared on GitHub
 gem "thin"    # use thin as a webserver
 gem "oauth-plugin", "~> 0.4.0"
 
 group :development do
+  gem 'sqlite3'
   gem "better_errors"
   gem "binding_of_caller"
+end
+
+group :production do
+  gem 'pg'
 end
 
 # Gems used only for assets and not required
