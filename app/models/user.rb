@@ -35,11 +35,21 @@ class User
         id = get_current_user_id
         friend_ids = []
         each_friend do |friend|
+            friend_ids.push(friend['id'])
+        end
+    end
+
+=begin
+    def get_friend_ids
+        id = get_current_user_id
+        friend_ids = []
+        each_friend do |friend|
             candidates = friend['users'].reject{|u| u['id'] == id}
             throw "I find not 1 but #{candidates.length} other users in a friend." unless candidates.length == 1
             friend_ids.push(candidates[0]['id'])
         end
     end
+=end
 
     def each_expense &block
         expenses = get_expenses['expenses']
@@ -112,16 +122,20 @@ class User
     end
 =end
 
+    def array_to_usd_balance arr
+        arr.inject 0 do |rest, b|
+            if b['currency_code'].downcase == 'usd'
+                return rest + b['amount'].to_f
+            else
+                return rest
+            end
+        end
+    end
+
     def get_current_balance 
         balance = 0
         each_friend do |friend|
-            balance += friend['balance'].inject 0 do |rest, b|
-                if b['currency_code'].downcase == 'usd'
-                    next rest + b['amount'].to_f
-                else
-                    next rest
-                end
-            end
+            balance += array_to_usd_balance friend['balance']
         end
         balance
     end
@@ -141,9 +155,7 @@ class User
         d = get_current_user_id
         friends = Hash.new(-1)
         each_friend do |friend|
-            candidates = friend['users'].reject{|u| u['id'] == id}
-            throw "I find not 1 but #{candidates.length} other users in a friend." unless candidates.length == 1
-            friends[candidates[0]['id']] = friend['balance'].to_f
+            friends[friend['id']] = array_to_usd_balance friend['balance']
         end
         friends
     end
