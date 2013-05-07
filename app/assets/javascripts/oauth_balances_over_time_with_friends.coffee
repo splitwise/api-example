@@ -48,7 +48,7 @@ this.primeCharts = (d) ->
                                     v: date, 
                                     f: prettyTime(date)
                                 }
-                            ].concat(balance_record.balances.map((b) -> {v: b or 0}))
+                            ].concat(balance_record.balances.map((b) -> { v: b or 0, f: "$#{(b or 0).toFixed(2)}"}))
                   })
     console.debug(cols)
     console.debug(rows)
