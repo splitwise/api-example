@@ -3,7 +3,6 @@ urlParams = {}
 for [k, v] in window.location.href[(window.location.href.indexOf('?') + 1)..].split(/&/).map((param) -> param.split(/\=/))
     urlParams[k] = v
 
-console.debug(urlParams)
 
 compare = (a, b) ->
     if a < b
@@ -76,13 +75,13 @@ searches = [] # of the form {search: String, rows: [{date: String, expense: Numb
 
 aggregatedCols = () -> 
     result = [{label: 'date', type: 'date'}].concat(searches.map((s) -> {label: s.search, type: 'number'}))
-    console.debug('Aggregated cols:')
-    console.debug(result)
+
+
     return result
 
 aggregatedRows = () -> # of the form [{date: String, expenses: [{expense: Number, total: Number, description: String}]}]
-    console.debug('aggregatedRows: searches:')
-    console.debug(searches)
+
+
 
     expenseRecords = {}
     for search, i in searches
@@ -90,29 +89,29 @@ aggregatedRows = () -> # of the form [{date: String, expenses: [{expense: Number
             expenseRecords[expense.date] ?= []
             expenseRecords[expense.date][i] = pick(expense, ['expense', 'total', 'description'])
 
-    console.debug('aggregatedRows: Object.keys:')
-    console.debug(Object.keys(expenseRecords).sort())
-    console.debug('aggregatedRows: expenseRecords:')
-    console.debug(expenseRecords)
+
+
+
+
 
     result = []
     Object.keys(expenseRecords).sort().forEach((date, i, dates) -> # sort by date
         
-        console.debug('here')
-        console.debug(dates)
+    
+    
         #I check for vacant cells:
         for j in [0...searches.length]
             if expenseRecords[date][j] is undefined
                 if i is 0
-                    console.debug("I add no expense.")
+                
                     expenseRecords[date][j] = {
                         expense: 0, 
                         total: 0, 
                         description: '(No expense)'
                     }
                 else
-                    console.debug({i: i, j: j, ds: dates[i - 1], er: expenseRecords[dates[i - 1]]})
-                    console.debug(expenseRecords[dates[i - 1]][j])
+                
+                
                     expenseRecords[date][j] = {   
                         expense: 0, 
                         total: expenseRecords[dates[i - 1]][j].total
@@ -128,14 +127,14 @@ aggregatedRows = () -> # of the form [{date: String, expenses: [{expense: Number
 
     )
 
-    console.debug('Aggregated rows:')
-    console.debug(result)
+
+
     return result
 
 
 chartData = () -> 
-    console.debug('Searches: ')
-    console.debug(searches)
+
+
     rows = aggregatedRows().map((r) -> 
                                     date = new Date(r.date)
                                     {c: 
@@ -161,15 +160,14 @@ $(() ->
 )
 
 this.primeCharts = (data) ->
-    console.debug('data: ')
-    console.debug(data)
+
+
     searches.push({search: urlParams.query, rows: data})
-    console.debug('searches: ')
-    console.debug(searches)
+
+
 
     createScrolledChart(chartData(), options)
 
-console.debug(this.primeCharts)
 
 chartLoading = (() ->
     interval = undefined
@@ -191,18 +189,21 @@ chartLoading = (() ->
     )()
 
 SearchStackItem = (search) ->
-    console.debug('search: ' + search)
+
     result = elem.prototypeOfSearchStackItem.clone()
     result.find('.search-name').html(search)
-    result.find('.delete-search').click(() -> slideOutSearchStackItem(result))
-    console.debug(result)
+    result.find('.delete-search').click(() -> 
+        if searches.length > 1
+            removeSearchItem($(this).closest('.search-stack-item')) 
+    )
+
     return result
 
-addSearchedExpenses = () ->
+addSearchItem = () ->
     search = $('#search-stack .matchbox .input').val()
     if search isnt ''
         $('#search-stack .matchbox .input').val('')
-        console.debug('search: ' + search)
+    
         chartLoading.start()
         slideInSearchStackItem(SearchStackItem(search))
         $.ajax({url: "/user/get_expenses_matching?query=#{search}"}).done((data) ->
@@ -213,16 +214,37 @@ addSearchedExpenses = () ->
             chartLoading.stop()
         )
 
+removeSearchItem = (item) ->  
+    $(item).children('.delete-search').click(() -> false)
+    console.debug(searches)
+    for search, i in searches.slice(0)
+        console.debug("I compare '#{search.search}' to '#{$(item).find('.search-name').html()}' and find them #{if search.search is $(item).find('.search-name').html() then '' else 'un'}equal.")
+        if search.search is $(item).find('.search-name').html()
+            searches.splice(i, 1)
+            break               #I break so that it removes only one search item.
+    console.debug(item)
+    console.debug($(item).find('.search-name')[0])
+    console.debug($(item).find('.search-name').html())
+    console.debug(searches)
+    slideOutSearchStackItem(item)
+    $('#main-chart').empty()
+    $('#scroll-chart').empty()
+    createScrolledChart(chartData(), options)
+
+
 $(() ->
     first = $('.search-stack-item:first-child')
     first.find('.search-name').html(urlParams.query)
     sliding.searchItemHeight = $('.search-stack-item').outerHeight()
-    $('.search-stack-item:first-child').find('.delete-search').click(() -> slideOutSearchStackItem(this))
-    $('#search-stack .matchbox .submit').click(addSearchedExpenses)
+    $('.search-stack-item:first-child').find('.delete-search').click(() -> 
+        if searches.length > 1
+            removeSearchItem($(this).closest('.search-stack-item')) 
+    )
+    $('#search-stack .matchbox .submit').click(addSearchItem)
     $('#search-stack .matchbox .input').keypress((event) ->
         if event.which is 13
             event.preventDefault()
-            addSearchedExpenses()
+            addSearchItem()
     )
 )
 
@@ -340,6 +362,47 @@ slideOutSearchStackItem = (item) ->
 
 
 
+###
+console.debug(0)
 
+this.cuteAlert = (() ->
+    console.debug(1)
+    container = $('<div></div>')
+    elem = $('<div></div>')
+    container.css({
+        position: 'fixed',
+        top: '0',
+        left: '0',
+        right: '0',
+        bottom: '0',
+        display: 'none'
+    })
+    elem.css({
+        margin: 'auto',
+        width: '16em',
+        height: '12em'
+    })
+    container.append(elem)
 
+    console.debug(1)
+
+    $(document).ready(() ->
+        console.debug(3)
+        $('body').append(container)
+        setTimeout((() ->
+            cuteAlert('here')
+        ), 1000)
+    )
+
+    console.debug(2)
+
+    return (str) ->
+        console.debug(4)
+        elem.html(str)
+        container.fadeIn()
+        setTimeout((() ->
+            container.fadeOut()
+        ), 1000)
+)()
+###
 

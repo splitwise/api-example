@@ -8,7 +8,6 @@
 
 $(() -> 
     $('.top-menu-item.matching').click(() ->
-        console.debug('here')
         $('#matchbox .input').focus()
     )
 
@@ -66,11 +65,8 @@ optionsScrollChart =
 
 
 this.createScrolledChart = (data, variable) ->
-    console.debug("I create a scrolled chart.")
     cols = data.cols
     rows = data.rows
-    console.debug(cols)
-    console.debug(rows)
 
     createCheckin = (n, callback) -> () ->
         n -= 1
@@ -103,7 +99,6 @@ this.createScrolledChart = (data, variable) ->
     redrawMainChart = (startDate, finishDate) ->
         start = Math.max(0, indexOfDateAfter(startDate) - 1)
         finish = indexOfDateAfter(finishDate) + 1
-        console.debug(rows.slice(start, finish))
         dataTable = new google.visualization.DataTable({cols: cols, rows: rows.slice(start, finish)})
         elem.mainChart.draw(dataTable, variable.optionsMainChart)
 
@@ -119,7 +114,6 @@ this.createScrolledChart = (data, variable) ->
 
 
     drawCharts = createCheckin((if google.visualization then 1 else 2), () ->
-        console.debug('createScrolledChart: all parallel prerequisites have loaded; I will now draw the charts.')
 
         spawnDates()
         elem.scrollChart = createScrollChart()
@@ -152,6 +146,7 @@ this.createScrolledChart = (data, variable) ->
         event.preventDefault()
         filmHandleLeftDraggable = true
         elem.filmLabelLeft.css('visibility', 'visible')
+        $('body').css('cursor', 'col-resize')
         false
     )
 
@@ -159,6 +154,7 @@ this.createScrolledChart = (data, variable) ->
         event.preventDefault()
         filmHandleRightDraggable = true
         elem.filmLabelRight.css('visibility', 'visible')
+        $('body').css('cursor', 'col-resize')
         false
     )
 
@@ -175,6 +171,7 @@ this.createScrolledChart = (data, variable) ->
             filmDraggable = false
             elem.filmLabelLeft.css('visibility', 'hidden')
             elem.filmLabelRight.css('visibility', 'hidden')
+            $('body').css('cursor', 'default')
             redrawMainChartFromScrolled()
     )
 

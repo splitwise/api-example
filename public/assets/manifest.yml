@@ -13,10 +13,10 @@ unused/loading.gif: unused/loading-a409a23e81649c7d097849fa1e9933eb.gif
 unused/loading/index.gif: unused/loading-a409a23e81649c7d097849fa1e9933eb.gif
 unused/splitwise-logo-medium.png: unused/splitwise-logo-medium-d013ba5807d763d76952b9d67145e19d.png
 unused/splitwise-logo-medium/index.png: unused/splitwise-logo-medium-d013ba5807d763d76952b9d67145e19d.png
-application.js: application-318e3aa7e3679bc60c98d3a308bd9011.js
-application/index.js: application-318e3aa7e3679bc60c98d3a308bd9011.js
-application.css: application-c4c1d29beab1598e9792220a1315831d.css
-application/index.css: application-c4c1d29beab1598e9792220a1315831d.css
+application.js: application-b2fe15c1b34d1390ef6047b83c523901.js
+application/index.js: application-b2fe15c1b34d1390ef6047b83c523901.js
+application.css: application-2a866aa788dd13e350af775fa9d349a5.css
+application/index.css: application-2a866aa788dd13e350af775fa9d349a5.css
 fontawesome-webfont.eot: fontawesome-webfont-635909f146e208b3509acdf3b154bf0d.eot
 fontawesome-webfont/index.eot: fontawesome-webfont-635909f146e208b3509acdf3b154bf0d.eot
 fontawesome-webfont.ttf: fontawesome-webfont-6a4e273908b7e43d9e479d38b8ae5957.ttf

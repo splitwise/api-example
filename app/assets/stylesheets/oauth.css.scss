@@ -14,7 +14,7 @@ $splitwise-gray: #676767;
 $standard-border-radius: 0.4em;
 
 
-body {
+body, input {
     font-family: "Lato", "Lucida Grande", "Verdana", "Helvetica";
 }
 
@@ -353,8 +353,23 @@ div#film {
             padding: 0.5em 1em;
 
             .search-name {
-                text-overflow: '...';
+                display: inline-block;
+                width: 8em;
+                overflow: hidden;
+                text-overflow: ellipsis;
             
+            }
+
+            .delete-search {
+                float: right;
+                color: #DC0000;
+
+                &:hover {
+                    cursor: pointer;
+                    text-decoration: underline;
+
+                }
+
             }
 
         }
