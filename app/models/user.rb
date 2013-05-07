@@ -14,7 +14,7 @@ class User
         @access_token = access_token
     end
 
-    ['get_current_user', 'get_friendships'].each do |method|
+    ['get_current_user', 'get_friends'].each do |method|
         define_method method.to_sym do
             data = @access_token.get(API_URL+method)
             body = data.body
@@ -34,9 +34,9 @@ class User
     def get_friend_ids
         id = get_current_user_id
         friend_ids = []
-        each_friendship do |friendship|
-            candidates = friendship['users'].reject{|u| u['id'] == id}
-            throw "I find not 1 but #{candidates.length} other users in a friendship." unless candidates.length == 1
+        each_friend do |friend|
+            candidates = friend['users'].reject{|u| u['id'] == id}
+            throw "I find not 1 but #{candidates.length} other users in a friend." unless candidates.length == 1
             friend_ids.push(candidates[0]['id'])
         end
     end
@@ -97,23 +97,31 @@ class User
         end
     end
 
-    def each_friendship &block
-        get_friendships['friendships'].each &block
+    def each_friend &block
+        get_friends['friends'].each &block
     end
 
+=begin
     def each_friend &block
         id = get_current_user_id
-        each_friendship do |friendship|
-            candidates = friendship['users'].reject{|u| u['id'] == id}
-            throw "I find not 1 but #{candidates.length} other users in a friendship." unless candidates.length == 1
+        each_friend do |friend|
+            candidates = friend['users'].reject{|u| u['id'] == id}
+            throw "I find not 1 but #{candidates.length} other users in a friend." unless candidates.length == 1
             block.call(candidates[0])
         end    
     end
+=end
 
     def get_current_balance 
         balance = 0
-        each_friendship do |friendship|
-            balance += friendship['balance'].to_f
+        each_friend do |friend|
+            balance += friend['balance'].inject 0 do |rest, b|
+                if b['currency_code'].downcase == 'usd'
+                    next rest + b['amount'].to_f
+                else
+                    next rest
+                end
+            end
         end
         balance
     end
@@ -132,10 +140,10 @@ class User
         id = get_current_user_id
         d = get_current_user_id
         friends = Hash.new(-1)
-        each_friendship do |friendship|
-            candidates = friendship['users'].reject{|u| u['id'] == id}
-            throw "I find not 1 but #{candidates.length} other users in a friendship." unless candidates.length == 1
-            friends[candidates[0]['id']] = friendship['balance'].to_f
+        each_friend do |friend|
+            candidates = friend['users'].reject{|u| u['id'] == id}
+            throw "I find not 1 but #{candidates.length} other users in a friend." unless candidates.length == 1
+            friends[candidates[0]['id']] = friend['balance'].to_f
         end
         friends
     end
