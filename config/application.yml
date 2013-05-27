@@ -1,0 +1,8 @@
+# Add application configuration variables here, as shown below.
+
+SPLITWISE_API_KEY: TjqN1wJ1TDr3iDjCjKsAulvPuh2Wct5eJlBroIus
+SPLITWISE_API_SECRET: Bv2AVwZJNhElF5oqYYlx619B0JxsaONxy85HYaGt
+SPLITWISE_SITE: "https://secure.splitwise.com"
+SPLITWISE_AUTHORIZE_URL: "/authorize"
+SPLITWISE_REQUEST_TOKEN_URL: "/api/v3.0/get_request_token"
+SPLITWISE_ACCESS_TOKEN_URL: "/api/v3.0/get_access_token"
