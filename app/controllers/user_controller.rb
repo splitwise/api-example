@@ -9,7 +9,11 @@ class UserController < ApplicationController
 
   def login
     @request_token = consumer.get_request_token
+    p @request_token
+    puts @request_token
     Rails.cache.write(@request_token.token, @request_token.secret)
+    p @request_token.authorize_url
+    puts @request_token.authorize_url
     redirect_to @request_token.authorize_url
   end
 
