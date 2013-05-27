@@ -8,6 +8,9 @@ class UserController < ApplicationController
   end
 
   def login
+    puts "here"
+    p consumer
+    puts consumer
     @request_token = consumer.get_request_token
     p @request_token
     puts @request_token
