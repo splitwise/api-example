@@ -7,7 +7,7 @@ prettyTime = (t) -> "#{t.toLocaleTimeString()} #{t.getMonth()+1}/#{t.getDate()}"
 
 
 options = 
-    chartType: 'AreaChart'
+    chartType: 'ColumnChart'
 
     optionsMainChart:
         colors: ['#0088CC']
@@ -18,9 +18,11 @@ options =
         hAxis:
             textStyle: 
                 fontName: 'Lato, Lucida Grande'
+            slantedText: true
         vAxis:
             textStyle:
                 fontName: 'Lato, Lucida Grande'
+            format: '$###,###.##'
 
     optionsScrollChart:
         colors: ['#0088CC']

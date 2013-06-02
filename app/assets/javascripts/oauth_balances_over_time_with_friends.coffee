@@ -5,7 +5,7 @@ prettyTime = (t) -> "#{t.toLocaleTimeString()} #{t.getMonth()+1}/#{t.getDate()}"
 prettyFriendName = (f) -> "#{f.first_name} #{f.last_name}"
 
 options = 
-    chartType: 'AreaChart'
+    chartType: 'LineChart'
 
     optionsMainChart:
         legend:
@@ -14,9 +14,11 @@ options =
         hAxis:
             textStyle: 
                 fontName: 'Lato, Lucida Grande'
+            slantedText: true
         vAxis:
             textStyle:
                 fontName: 'Lato, Lucida Grande'
+            format: '$###,###.##'
     
     optionsScrollChart:
         backgroundColor: '#F5F5F5'

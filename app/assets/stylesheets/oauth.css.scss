@@ -335,16 +335,20 @@ div#film {
             z-index: 100;
 
             .input {
-                width: 9em;
+                width: 5em;
+                font-size: 1em;
 
             }
 
             .submit {
                 float: right;
+                margin-top: 3px;
                 padding: 0.05em 0.5em;
                 border-radius: 1em;
                 background-color: #fff;
                 color: #000; 
+                font-size: 1em;
+                height: 21px; /* for safari */
             
             }
         }

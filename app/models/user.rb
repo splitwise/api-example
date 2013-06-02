@@ -249,13 +249,13 @@ class User
 
     def get_expenses_matching query
         expenses = []
-        processed_query = query.gsub(/[^a-zA-Z]/, ' ').split(/\ +/)
+        processed_query = query.gsub(/[^a-zA-Z]/, ' ').split(/\ +/).map(&:downcase)
         p query
         p processed_query
         each_expense_and_share do |expense, share|
             unless expense['payment']
                 if processed_query.select { |q| 
-                        (expense['description'] + ' ' + expense['category']['name']).match(q)
+                        (expense['description'] + ' ' + expense['category']['name']).downcase.match(q)
                     }.length > 0 or processed_query.length == 0
                     expenses.push({
                         "date" => expense['date'],

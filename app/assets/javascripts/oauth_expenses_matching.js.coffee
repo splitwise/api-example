@@ -28,7 +28,7 @@ prettyTime = (t) -> "#{t.toLocaleTimeString()} #{t.getMonth()+1}/#{t.getDate()}"
 
 
 options = 
-    chartType: 'AreaChart'
+    chartType: 'LineChart'
 
     optionsMainChart:
         legend:
@@ -37,9 +37,11 @@ options =
         hAxis:
             textStyle: 
                 fontName: 'Lato, Lucida Grande'
+            slantedText: true
         vAxis:
             textStyle:
                 fontName: 'Lato, Lucida Grande'
+            format: '$###,###.##'
 
     optionsScrollChart:
         backgroundColor: '#F5F5F5'
@@ -151,22 +153,24 @@ chartData = () ->
     cols = aggregatedCols()
     return {cols: cols, rows: rows}
 
-
+google.load('visualization', '1', {packages: ['corechart']}) unless google.visualization
 
 elem = {}
 
-$(() ->
-    elem.prototypeOfSearchStackItem = $($('.search-stack-item')[0]).clone() #jQuery should find only one search-stack-item.
-)
+elem.prototypeOfSearchStackItem = $("<li class='search-stack-item'>
+                                         <div class='search-stack-item-content'>
+                                             <span class='search-name'></span>
+                                             <span class='delete-search'>x</span>
+                                         </div>
+                                     </li>")
+
 
 this.primeCharts = (data) ->
 
+    #I removed this when limiting the search interface to one matchbox.
+    #searches.push({search: urlParams.query, rows: data})
 
-    searches.push({search: urlParams.query, rows: data})
-
-
-
-    createScrolledChart(chartData(), options)
+    #createScrolledChart(chartData(), options)
 
 
 chartLoading = (() ->
@@ -203,13 +207,13 @@ addSearchItem = () ->
     search = $('#search-stack .matchbox .input').val()
     if search isnt ''
         $('#search-stack .matchbox .input').val('')
-    
         chartLoading.start()
         slideInSearchStackItem(SearchStackItem(search))
         $.ajax({url: "/user/get_expenses_matching?query=#{search}"}).done((data) ->
             searches.push({search: search, rows: JSON.parse(data)})
             $('#main-chart').empty()
             $('#scroll-chart').empty()
+            console.debug(createScrolledChart);
             createScrolledChart(chartData(), options)
             chartLoading.stop()
         )
@@ -234,12 +238,14 @@ removeSearchItem = (item) ->
 
 $(() ->
     first = $('.search-stack-item:first-child')
-    first.find('.search-name').html(urlParams.query)
+    #first.find('.search-name').html(urlParams.query)
     sliding.searchItemHeight = $('.search-stack-item').outerHeight()
+    ###
     $('.search-stack-item:first-child').find('.delete-search').click(() -> 
         if searches.length > 1
             removeSearchItem($(this).closest('.search-stack-item')) 
     )
+    ###
     $('#search-stack .matchbox .submit').click(addSearchItem)
     $('#search-stack .matchbox .input').keypress((event) ->
         if event.which is 13
@@ -280,7 +286,7 @@ slideInSearchStackItem = (newItem) ->
     newItemInner.css('display', 'none')
     console.log($('#search-stack').offset())
     if not $('.search-stack-item:nth-last-child(2)')[0]
-        newItem.css('top', $('#search-stack').offset().top + 'px')
+        newItem.css('top', '0px')
     newItem.insertBefore($('.search-stack-item:last-child'))
 
     afterFadeIn = () ->
@@ -289,6 +295,10 @@ slideInSearchStackItem = (newItem) ->
         newItem.css('position', 'static')
         newItem.css('z-index', '1')
    
+    newItemInner.fadeIn(sliding.insertDuration, afterFadeIn)
+
+    sliding.searchItemHeight = $('.search-stack-item:first-child').outerHeight()
+
     moveLastItem = setInterval((() -> 
         start = new Date()
         return () -> 
@@ -296,7 +306,7 @@ slideInSearchStackItem = (newItem) ->
                          lastItemHeightFunc((new Date() - start) / sliding.insertDuration))
     )(), sliding.insertDuration / sliding.searchItemHeight / sliding.framesPerHeight)
 
-    newItemInner.fadeIn(sliding.insertDuration, afterFadeIn)
+    
 
 
 slideOutSearchStackItem = (item) ->

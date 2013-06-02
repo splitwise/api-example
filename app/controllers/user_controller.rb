@@ -77,7 +77,7 @@ class UserController < ApplicationController
 
   def expenses_matching
     @title = "Search an expense"
-    @data = JSON.unparse(current_user.get_expenses_matching_cumulative(params[:query]))
+    #@data = JSON.unparse(current_user.get_expenses_matching_cumulative(params[:query]))
   end
 
   def get_expenses_matching 

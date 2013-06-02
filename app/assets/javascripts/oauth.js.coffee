@@ -63,11 +63,19 @@ optionsScrollChart =
         textPosition: 'none'
 ###
 
+foo = (->
+    i = 0
+
+    return (n) ->
+        i += 1
+        console.debug(i + ' >>> ' + n)
+        console.debug($('#main-chart')[0])
+)()
 
 this.createScrolledChart = (data, variable) ->
+    debugger
     cols = data.cols
     rows = data.rows
-
     createCheckin = (n, callback) -> () ->
         n -= 1
         callback() if n is 0
@@ -75,13 +83,11 @@ this.createScrolledChart = (data, variable) ->
     prettyTime = (t) -> "#{t.toLocaleTimeString()} #{t.getMonth()+1}/#{t.getDate()}"
 
     scrollLabelDate = (t) -> t.toLocaleDateString()
-
     dates = {}
     spawnDates = () ->
         dates.all = rows.map((r) -> r.c[0].v)
         dates.first = +dates.all[0]
         dates.span = dates.all[dates.all.length - 1] - dates.first
-
     dateOnScroll = (x) -> 
         return new Date(dates.first + dates.span * (x / elem.film.offsetParent().width()))
 
@@ -91,11 +97,9 @@ this.createScrolledChart = (data, variable) ->
         google.visualization.events.addListener(chart, 'ready', layerFilm)
         chart.draw(dataTable, variable.optionsScrollChart)
         return chart
-
     initMainChart = () ->
         chart = new google.visualization[variable.chartType]($('#main-chart')[0])
         return chart
-
     redrawMainChart = (startDate, finishDate) ->
         start = Math.max(0, indexOfDateAfter(startDate) - 1)
         finish = indexOfDateAfter(finishDate) + 1
@@ -105,16 +109,13 @@ this.createScrolledChart = (data, variable) ->
     redrawMainChartFromScrolled = () ->
         redrawMainChart(dateOnScroll(elem.film.position().left),
                 dateOnScroll(elem.film.position().left + elem.film.width()))
-
     indexOfDateAfter = (date) ->
             for d, i in dates.all                       #optimize this by using a binary search
                 if date < d
                     return i
             return dates.all.length - 1
 
-
     drawCharts = createCheckin((if google.visualization then 1 else 2), () ->
-
         spawnDates()
         elem.scrollChart = createScrollChart()
         elem.mainChart = initMainChart()
@@ -123,12 +124,10 @@ this.createScrolledChart = (data, variable) ->
     )
 
 
-
     filmHandleLeftDraggable = false
     filmHandleRightDraggable = false
     filmDraggable = false
     filmPressedAt = false
-
     elem =
         filmBackdrop: $("<div id='film-backdrop'></div>"),
         film: $("<div id='film'></div>"),
@@ -138,10 +137,8 @@ this.createScrolledChart = (data, variable) ->
         filmLabelRight: $("<span class='film-label right'></span>")
         filmLabelContainerLeft: $("<span class='film-label-container left'></span>")
         filmLabelContainerRight: $("<span class='film-label-container right'></span>")
-
     elem.filmBackdrop.append(elem.film.append(elem.filmHandleLeft.append(elem.filmLabelContainerLeft.append(elem.filmLabelLeft)))
                                       .append(elem.filmHandleRight.append(elem.filmLabelContainerRight.append(elem.filmLabelRight))))
-
     elem.filmHandleLeft.mousedown((event) ->
         event.preventDefault()
         filmHandleLeftDraggable = true
@@ -149,7 +146,6 @@ this.createScrolledChart = (data, variable) ->
         $('body').css('cursor', 'col-resize')
         false
     )
-
     elem.filmHandleRight.mousedown((event) ->
         event.preventDefault()
         filmHandleRightDraggable = true
@@ -157,13 +153,11 @@ this.createScrolledChart = (data, variable) ->
         $('body').css('cursor', 'col-resize')
         false
     )
-
     elem.film.mousedown((event) ->
         event.preventDefault()
         filmDraggable = true
         filmPressedAt = event.pageX - $(this).offset().left
     )
-
     $(document).mouseup(() ->
         if filmHandleLeftDraggable or filmHandleRightDraggable or filmDraggable
             filmHandleLeftDraggable = false
@@ -174,14 +168,20 @@ this.createScrolledChart = (data, variable) ->
             $('body').css('cursor', 'default')
             redrawMainChartFromScrolled()
     )
-
+    
     onMouseMove = (event) ->
         minHandleDistance = 10
         newX = event.pageX - elem.film.offsetParent().offset().left
-        if filmHandleLeftDraggable and newX < -minHandleDistance + elem.film.position().left + elem.film.outerWidth() - elem.filmHandleLeft.width() - elem.filmHandleRight.width()
+        if filmHandleLeftDraggable and minHandleDistance + elem.filmHandleRight.width() + elem.filmHandleLeft.width() < elem.film.width() - (newX - parseFloat(elem.film.css('left'), 10))
             newX = Math.max(newX, 0)
-            elem.film.css('width', elem.film.outerWidth() - newX + parseInt(elem.film.css('left')), 10)
+            elem.film.css('width', elem.film.width() - (newX - parseFloat(elem.film.css('left'), 10)))
             elem.film.css('left', newX)
+            console.debug(elem.film.width())
+            console.debug(newX)
+            console.debug(parseFloat(elem.film.css('left'), 10))
+            console.debug(newX - parseFloat(elem.film.css('left'), 10))
+            console.debug(elem.film.width() - newX + parseFloat(elem.film.css('left'), 10))
+            console.debug(elem.film.width() - (newX - parseFloat(elem.film.css('left'), 10)))
             elem.filmLabelLeft.html(scrollLabelDate(dateOnScroll(newX)))
         else if filmHandleRightDraggable and minHandleDistance + elem.film.position().left + elem.filmHandleLeft.width() + elem.filmHandleRight.width() < newX
             newX = Math.min(newX, elem.film.offsetParent().width())
@@ -192,7 +192,6 @@ this.createScrolledChart = (data, variable) ->
             newX = Math.min(Math.max(newX, 0), 
                             elem.film.offsetParent().width() - elem.film.width())
             elem.film.css('left', newX)
-
     $(document).mousemove(onMouseMove)
 
     layerFilm = () ->
@@ -203,11 +202,9 @@ this.createScrolledChart = (data, variable) ->
         elem.filmBackdrop.height(rect.attr('height'))
         $('#scroll-chart').append(elem.filmBackdrop)
 
-
-
     google.setOnLoadCallback(drawCharts)
     unless google.visualization
-        google.load('visualization', '1', {packages: ['corechart']})
+        google.load('visualization', '1', {packages: ['corechart']}) unless google.visualization
 
     ###
     rows = undefined
