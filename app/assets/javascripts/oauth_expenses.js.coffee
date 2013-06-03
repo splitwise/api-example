@@ -5,6 +5,8 @@
 
 prettyTime = (t) -> "#{t.toLocaleTimeString()} #{t.getMonth()+1}/#{t.getDate()}"
 
+monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ]
+dateToMonth = (t) -> "#{monthNames[t.getMonth()]} #{t.getFullYear()}"
 
 options = 
     chartType: 'ColumnChart'
@@ -38,17 +40,17 @@ options =
             textPosition: 'none'
 
 
-cols = [{id: 'date', type: 'date'}, {id: 'balance', type: 'number'}]
+cols = [{id: 'date', type: 'string'}, {id: 'balance', type: 'number'}]
 
 this.primeCharts = (data) ->
     rows = data.map((e) -> 
             date = new Date(e.date)
             {c: 
                 [
-                    {v: date, f: prettyTime(date)}, 
+                    {v: dateToMonth(date)}, 
                     {   
-                        v: Number(e.total), 
-                        f: "#{e.description}\nCost: $#{e.expense.toFixed(2)}\nTotal: $#{e.total.toFixed(2)}"
+                        v: Number(e.expense), 
+                        f: "Total: $#{e.expense.toFixed(2)}"
                     }
                 ]
             }

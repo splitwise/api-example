@@ -1,3 +1,5 @@
+require 'time'
+
 class Array
     def sortBy! &iterator
         self.sort! do |a, b|
@@ -203,6 +205,31 @@ class User
             a['date']
         end
         expenses
+    end
+
+    def bucket_of date
+        if date.is_a? String
+            date = Time.parse(date)
+        end
+        Time.gm(date.year, date.month)
+    end
+
+    def same_bucket d1, d2
+        (bucket_of d1) == (bucket_of d2)
+    end
+
+    def get_expenses_over_time_by_month
+        x = 0
+        get_expenses_over_time.inject [] do |rest, expense|
+            if rest[-1] and same_bucket rest[-1]['date'], expense['date']
+                rest[-1]['expense'] += expense['expense']
+                rest[-1]['description'] = expense['description']
+                rest
+            else
+                expense['date'] = bucket_of expense['date']
+                rest.push expense
+            end
+        end
     end
 
     def get_expenses_over_time_cumulative

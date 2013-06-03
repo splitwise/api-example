@@ -62,7 +62,7 @@ class UserController < ApplicationController
 
   def expenses_over_time
     @title = "Expenses"
-    @data = JSON.unparse(current_user.get_expenses_over_time_cumulative)
+    @data = JSON.unparse(current_user.get_expenses_over_time_by_month)
   end
 
   def expenses_by_category

@@ -63,15 +63,6 @@ optionsScrollChart =
         textPosition: 'none'
 ###
 
-foo = (->
-    i = 0
-
-    return (n) ->
-        i += 1
-        console.debug(i + ' >>> ' + n)
-        console.debug($('#main-chart')[0])
-)()
-
 this.createScrolledChart = (data, variable) ->
     debugger
     cols = data.cols
@@ -103,6 +94,8 @@ this.createScrolledChart = (data, variable) ->
     redrawMainChart = (startDate, finishDate) ->
         start = Math.max(0, indexOfDateAfter(startDate) - 1)
         finish = indexOfDateAfter(finishDate) + 1
+        console.debug(cols);
+        console.debug(rows);
         dataTable = new google.visualization.DataTable({cols: cols, rows: rows.slice(start, finish)})
         elem.mainChart.draw(dataTable, variable.optionsMainChart)
 
@@ -176,12 +169,6 @@ this.createScrolledChart = (data, variable) ->
             newX = Math.max(newX, 0)
             elem.film.css('width', elem.film.width() - (newX - parseFloat(elem.film.css('left'), 10)))
             elem.film.css('left', newX)
-            console.debug(elem.film.width())
-            console.debug(newX)
-            console.debug(parseFloat(elem.film.css('left'), 10))
-            console.debug(newX - parseFloat(elem.film.css('left'), 10))
-            console.debug(elem.film.width() - newX + parseFloat(elem.film.css('left'), 10))
-            console.debug(elem.film.width() - (newX - parseFloat(elem.film.css('left'), 10)))
             elem.filmLabelLeft.html(scrollLabelDate(dateOnScroll(newX)))
         else if filmHandleRightDraggable and minHandleDistance + elem.film.position().left + elem.filmHandleLeft.width() + elem.filmHandleRight.width() < newX
             newX = Math.min(newX, elem.film.offsetParent().width())
